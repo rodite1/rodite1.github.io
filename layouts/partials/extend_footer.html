@@ -62,3 +62,68 @@ document.addEventListener("DOMContentLoaded", function() {
     setInterval(drawFlakes, 30);
 });
 </script>
+
+
+<!-- 首页专属特效：轮播图与背景音乐 -->
+{{ if .IsHome }}
+<!-- 轮播图容器 -->
+<div id="home-slider">
+    <div class="slide" style="background-image: url('/bg1.jpg');"></div>
+    <div class="slide" style="background-image: url('/bg2.jpg');"></div>
+    <div class="slide" style="background-image: url('/bg3.jpg');"></div>
+    <div class="slide" style="background-image: url('/bg4.jpg');"></div>
+    <div class="slide" style="background-image: url('/bg5.jpg');"></div>
+</div>
+
+<!-- 背景音乐 -->
+<audio id="bg-music" src="/music.mp3" loop></audio>
+<!-- 悬浮音乐按钮 -->
+<button id="music-btn" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; padding: 10px 15px; border-radius: 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;">
+    🎵 播放音乐
+</button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. 轮播图逻辑
+    var slides = document.querySelectorAll(".slide");
+    var currentSlide = 0;
+    
+    if (slides.length > 0) {
+        slides[0].classList.add("active"); // 默认显示第一张
+        setInterval(function() {
+            slides[currentSlide].classList.remove("active");
+            currentSlide = (currentSlide + 1) % slides.length; // 循环切换
+            slides[currentSlide].classList.add("active");
+        }, 6000); // 每 6 秒切换一次（可以按需修改这个数字，单位是毫秒）
+    }
+
+    // 2. 音乐逻辑
+    var music = document.getElementById("bg-music");
+    var btn = document.getElementById("music-btn");
+    
+    if (music && btn) {
+        music.volume = 0.4; // 背景音乐音量不要太大，0.4 比较合适
+        
+        // 点击按钮播放/暂停
+        btn.addEventListener("click", function() {
+            if (music.paused) {
+                music.play();
+                btn.innerHTML = "⏸️ 暂停音乐";
+            } else {
+                music.pause();
+                btn.innerHTML = "🎵 播放音乐";
+            }
+        });
+        
+        // 监听页面首次点击，尝试自动播放（绕过浏览器限制）
+        document.body.addEventListener("click", function() {
+            if (music.paused) {
+                music.play().then(() => {
+                    btn.innerHTML = "⏸️ 暂停音乐";
+                }).catch(e => console.log("浏览器拦截了自动播放，请点击按钮"));
+            }
+        }, { once: true }); // 只在第一次点击时生效
+    }
+});
+</script>
+{{ end }}
