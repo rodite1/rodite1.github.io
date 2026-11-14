@@ -62,6 +62,16 @@
     }
 </style>
 
+    /* 修复非首页内容被导航栏遮挡的问题 */
+    .main {
+        padding-top: 80px !important; 
+    }
+    
+    /* 首页依然保持全屏不增加内边距 */
+    .home-info {
+        margin-top: -60px !important;
+    }
+
 <!-- ==================== 雪花特效 ==================== -->
 <canvas id="snow-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
 <script>

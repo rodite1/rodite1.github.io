@@ -41,4 +41,7 @@ theme = "PaperMod"
     name = "🔍"    # 直接用这个符号
     url = "/search/"
     weight = 5
-  
+
+# 开启搜索索引生成
+[outputs]
+  home = ["HTML", "RSS", "JSON"]  
