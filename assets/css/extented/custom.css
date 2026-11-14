@@ -1,58 +1,51 @@
-/* 1. 让根节点和网页彻底透明，把底层完全让给轮播图 */
-html, body {
+/* 强制让网页内容层透明 */
+html, body, .main, .list {
     background-color: transparent !important;
 }
 
-/* 2. 轮播图容器固定在底层 */
+/* 强制轮播图在最底层但可见 */
 #home-slider {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -2 !important; /* 放到最底层 */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: -2 !important;
+    display: block !important;
 }
 .slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-size: cover !important;
+    background-position: center !important;
     opacity: 0;
-    transition: opacity 2s ease-in-out; /* 2秒渐变过渡 */
+    transition: opacity 2s ease-in-out !important;
 }
 .slide.active {
-    opacity: 1;
+    opacity: 1 !important;
 }
 
-/* 3. 网页内容层的半透明黑色遮罩（保证白字看得清，且不挡鼠标点击） */
+/* 黑色遮罩，只盖在背景图上，不影响内容点击 */
 body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4) !important; /* 遮罩深度，0.4 比较适中，觉得暗可以改成 0.2 */
-    z-index: -1 !important; /* 在背景图之上，内容之下 */
-    pointer-events: none; 
+    content: "" !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.5) !important; /* 这里控制暗度，0.5是半黑 */
+    z-index: -1 !important;
+    pointer-events: none !important;
 }
 
-/* 4. 卡片毛玻璃效果（深色版） */
-.post-content, 
-.post-entry, 
-.profile_inner {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    background-color: rgba(30, 30, 30, 0.6) !important; /* 半透明深灰 */
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-/* 5. 强制雪花在最顶层 */
-#snow-canvas {
-    z-index: 9999 !important;
+/* 文章卡片保持毛玻璃质感 */
+.post-entry, .post-content, .profile_inner {
+    background-color: rgba(30, 30, 30, 0.6) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
 }
