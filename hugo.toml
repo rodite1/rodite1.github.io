@@ -36,4 +36,9 @@ theme = "PaperMod"
     name = "分类"
     url = "/categories/"
     weight = 4
+    [[menu.main]]
+    identifier = "search"
+    name = "🔍"    # 直接用这个符号
+    url = "/search/"
+    weight = 5
   
