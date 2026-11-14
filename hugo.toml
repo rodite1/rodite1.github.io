@@ -1,4 +1,8 @@
 baseURL = 'https://rodite1.github.io/'
 locale = 'zh-cn'
-title = 'Rodite Hub'
+title = 'Lonely Someone broken'
 theme = "PaperMod"
+
+[Params]
+  defaultTheme = "dark"
+
