@@ -1,0 +1,58 @@
+/* 1. 让根节点和网页彻底透明，把底层完全让给轮播图 */
+html, body {
+    background-color: transparent !important;
+}
+
+/* 2. 轮播图容器固定在底层 */
+#home-slider {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2 !important; /* 放到最底层 */
+}
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 2s ease-in-out; /* 2秒渐变过渡 */
+}
+.slide.active {
+    opacity: 1;
+}
+
+/* 3. 网页内容层的半透明黑色遮罩（保证白字看得清，且不挡鼠标点击） */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4) !important; /* 遮罩深度，0.4 比较适中，觉得暗可以改成 0.2 */
+    z-index: -1 !important; /* 在背景图之上，内容之下 */
+    pointer-events: none; 
+}
+
+/* 4. 卡片毛玻璃效果（深色版） */
+.post-content, 
+.post-entry, 
+.profile_inner {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    background-color: rgba(30, 30, 30, 0.6) !important; /* 半透明深灰 */
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* 5. 强制雪花在最顶层 */
+#snow-canvas {
+    z-index: 9999 !important;
+}
