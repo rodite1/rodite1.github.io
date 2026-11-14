@@ -3,18 +3,19 @@ locale = 'zh-cn'
 title = 'Lonely Someone broken'
 theme = "PaperMod"
 
-# 注意这里改成了全小写，Hugo 才能认出来
 [params]
-  defaultTheme = "light"
+  defaultTheme = "dark"
   ShowSearch = true
   ShowCodeCopyButtons = true
-  
-  # 这里是首页的大标题和打字机文字
-  [params.homeInfoParams]
-    Title = "Rodite"
-    Content = "What if God were a girl？"
 
-# 这里是导航栏菜单配置
+  # ====== 社交图标（添加邮箱和 GitHub） ======
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/rodite1"
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:你的邮箱@example.com"
+
 [menu]
   [[menu.main]]
     identifier = "home"
@@ -36,12 +37,12 @@ theme = "PaperMod"
     name = "分类"
     url = "/categories/"
     weight = 4
-    [[menu.main]]
+  [[menu.main]]
     identifier = "search"
-    name = "🔍"    # 直接用这个符号
+    name = "🔍"
     url = "/search/"
     weight = 5
 
 # 开启搜索索引生成
 [outputs]
-  home = ["HTML", "RSS", "JSON"]  
+  home = ["HTML", "RSS", "JSON"]

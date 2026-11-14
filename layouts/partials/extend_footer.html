@@ -1,4 +1,4 @@
-<!-- ==================== 导航栏 CSS ==================== -->
+<!-- ==================== 全局导航栏 CSS ==================== -->
 <style>
     /* 1. 顶部导航栏毛玻璃 */
     .header {
@@ -11,8 +11,6 @@
         left: 0 !important;
         z-index: 1000 !important;
     }
-
-    /* 2. 强制导航栏两端对齐 */
     .nav {
         max-width: 100vw !important;
         padding: 0 30px !important;
@@ -20,64 +18,80 @@
         justify-content: space-between !important; 
         align-items: center !important;
     }
+    .nav-right { display: flex !important; align-items: center !important; margin-left: auto !important; }
+    #menu { display: flex !important; align-items: center !important; margin: 0 !important; }
+    #menu a { margin: 0 10px !important; font-size: 15px !important; font-weight: 500 !important; padding: 5px 10px !important; border-radius: 8px !important; }
+    #menu a:hover { background: rgba(255, 255, 255, 0.15) !important; }
+    .search-button { margin-left: 15px !important; display: flex !important; }
+    .search-button svg { stroke: #ffffff !important; width: 20px !important; height: 20px !important; }
 
-    /* 3. 菜单和搜索按钮包在一起靠右 */
-    .nav-right {
-        display: flex !important;
-        align-items: center !important;
-        margin-left: auto !important; 
-    }
+    /* 修复非首页内容被导航栏遮挡的问题 */
+    .post-single, .list { padding-top: 80px !important; }
 
-    /* 4. 菜单项调整 */
-    #menu {
-        display: flex !important;
-        align-items: center !important;
-        margin: 0 !important;
-    }
-
-    #menu a {
-        margin: 0 10px !important;
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        padding: 5px 10px !important;
-        border-radius: 8px !important;
-    }
-
-    /* 鼠标悬浮微透明背景 */
-    #menu a:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-    }
-
-    /* 5. 搜索按钮调整 */
-    .search-button {
-        margin-left: 15px !important;
-        display: flex !important; 
-    }
-
-    /* 强制搜索图标变白 */
-    .search-button svg {
-        stroke: #ffffff !important;
-        width: 20px !important;
-        height: 20px !important;
-    }
-
-    /* ===== 修复非首页内容被导航栏遮挡的问题 ===== */
-    /* 只给文章详情页和列表页加顶部间距，不影响首页全屏 */
-    .post-single, .list {
-        padding-top: 80px !important; 
-    }
-
-    /* ===== 搜索页面毛玻璃美化 ===== */
+    /* 搜索页美化 */
     .search-input {
+        background: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important; border-radius: 12px !important;
+        color: #fff !important; padding: 15px 20px !important; font-size: 16px !important; width: 100% !important; outline: none !important;
+    }
+
+    /* ==================== 侧边栏与双列布局核心 CSS ==================== */
+    /* 首页向下滑动后的内容容器 */
+    .home-layout-wrapper {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        padding: 20px !important;
+        gap: 30px !important;
+    }
+    
+    /* 左侧文章列表 */
+    .main-list-col {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+
+    /* 右侧边栏 */
+    .custom-sidebar {
+        width: 320px !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    /* 侧边栏通用卡片毛玻璃样式 */
+    .sidebar-card {
         background: rgba(30, 30, 30, 0.6) !important;
         backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
         border-radius: 12px !important;
-        color: #fff !important;
-        padding: 15px 20px !important;
-        font-size: 16px !important;
-        width: 100% !important;
-        outline: none !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        padding: 20px !important;
+        color: #ccc !important;
+    }
+
+    /* 个人信息卡片 */
+    .profile-card { text-align: center; }
+    .profile-card img {
+        width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+        margin-bottom: 15px; border: 3px solid rgba(255,255,255,0.2);
+    }
+    .profile-card h3 { margin: 0 0 5px 0; color: #fff; font-size: 1.2rem; }
+    .profile-card .bio { font-size: 0.9rem; color: #aaa; margin-bottom: 15px; }
+    .profile-stats { display: flex; justify-content: space-around; font-size: 0.85rem; margin-bottom: 15px; }
+    .profile-stats div { display: flex; flex-direction: column; }
+    .profile-stats span { color: #fff; font-weight: bold; margin-bottom: 3px; }
+    .social-links { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+    .social-links a { color: #aaa; transition: color 0.3s; }
+    .social-links a:hover { color: #fff; }
+
+    /* 手机端适配：屏幕变小时，边栏跑到下面去 */
+    @media (max-width: 768px) {
+        .home-layout-wrapper { flex-direction: column !important; }
+        .custom-sidebar { width: 100% !important; }
     }
 </style>
 
@@ -90,46 +104,25 @@ document.addEventListener("DOMContentLoaded", function() {
     var width = canvas.width = window.innerWidth;
     var height = canvas.height = window.innerHeight;
     var flakes = [];
-
     window.addEventListener("resize", function() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
+        width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight;
     });
-
     for (var i = 0; i < 150; i++) {
-        flakes.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            r: Math.random() * 3 + 1,
-            d: Math.random() + 1,
-            color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")"
-        });
+        flakes.push({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 3 + 1, d: Math.random() + 1, color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")" });
     }
-
     function drawFlakes() {
-        ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = "white";
-        ctx.beginPath();
+        ctx.clearRect(0, 0, width, height); ctx.fillStyle = "white"; ctx.beginPath();
         for (var i = 0; i < flakes.length; i++) {
-            var f = flakes[i];
-            ctx.fillStyle = f.color;
-            ctx.moveTo(f.x, f.y);
-            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+            var f = flakes[i]; ctx.fillStyle = f.color; ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
         }
-        ctx.fill();
-        moveFlakes();
+        ctx.fill(); moveFlakes();
     }
-
     var angle = 0;
     function moveFlakes() {
         angle += 0.01;
         for (var i = 0; i < flakes.length; i++) {
-            var f = flakes[i];
-            f.y += Math.pow(f.d, 2) + 0.5;
-            f.x += Math.sin(angle) * 1;
-            if (f.y > height) {
-                flakes[i] = { x: Math.random() * width, y: 0, r: f.r, d: f.d, color: f.color };
-            }
+            var f = flakes[i]; f.y += Math.pow(f.d, 2) + 0.5; f.x += Math.sin(angle) * 1;
+            if (f.y > height) { flakes[i] = { x: Math.random() * width, y: 0, r: f.r, d: f.d, color: f.color }; }
         }
     }
     setInterval(drawFlakes, 30);
@@ -139,85 +132,23 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- ==================== 首页专属特效 ==================== -->
 {{ if .IsHome }}
 <style>
-    /* 1. 清理网页底色 */
-    html, body, .main, .list, #content, #wrapper, main, .home-info {
-        background-color: transparent !important;
-        background-image: none !important;
-        box-shadow: none !important;
-    }
-
-    /* 2. 轮播图与遮罩 */
-    #home-slider {
-        position: fixed !important;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        z-index: -999 !important;
-        pointer-events: none;
-    }
-    .slide {
-        position: absolute;
-        width: 100%; height: 100%;
-        background-size: cover !important;
-        background-position: center !important;
-        opacity: 0;
-        transition: opacity 2s ease-in-out;
-    }
+    /* 首屏全屏样式 */
+    html, body, .main, .list, #content, #wrapper, main, .home-info { background-color: transparent !important; background-image: none !important; box-shadow: none !important; }
+    #home-slider { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -999 !important; pointer-events: none; }
+    .slide { position: absolute; width: 100%; height: 100%; background-size: cover !important; background-position: center !important; opacity: 0; transition: opacity 2s ease-in-out; }
     .slide.active { opacity: 1 !important; }
-    body::before {
-        content: "" !important;
-        position: fixed !important;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-        z-index: -998 !important;
-        pointer-events: none;
-    }
-
-    /* 3. 强制首屏占满全屏并居中 */
-    .home-info {
-        height: 100vh !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-        align-items: center !important;
-        margin-top: -60px !important;
-    }
-    .home-info .entry-header h1 {
-        font-size: 4rem !important;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important;
-        margin-bottom: 10px !important;
-    }
-    .home-info .entry-content {
-        font-size: 1.5rem !important;
-        text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important;
-    }
-
-    /* 4. 文章卡片毛玻璃 */
-    .post-entry, .post-content, .profile_inner {
-        background-color: rgba(30, 30, 30, 0.6) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        border-radius: 12px !important;
-        border: 1px solid rgba(255,255,255,0.1) !important;
-        margin-bottom: 20px !important;
-    }
+    body::before { content: "" !important; position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5) !important; z-index: -998 !important; pointer-events: none; }
     
-    /* 5. 底部向下箭头 */
-    .scroll-down {
-        position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: bounce 2s infinite;
-        z-index: 10;
-    }
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
-        40% { transform: translate(-50%, -15px); }
-        60% { transform: translate(-50%, -7px); }
-    }
+    .home-info { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; margin-top: -60px !important; }
+    .home-info .entry-header h1 { font-size: 4rem !important; text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important; margin-bottom: 10px !important; }
+    .home-info .entry-content { font-size: 1.5rem !important; text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important; }
+    .post-entry, .post-content, .profile_inner { background-color: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important; margin-bottom: 20px !important; }
+    
+    .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; z-index: 10; }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -15px); } 60% { transform: translate(-50%, -7px); } }
 </style>
 
+<!-- 轮播图与向下箭头 -->
 <div id="home-slider">
     <div class="slide" style="background-image: url('/bg1.jpg');"></div>
     <div class="slide" style="background-image: url('/bg2.jpg');"></div>
@@ -225,13 +156,13 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="slide" style="background-image: url('/bg4.jpg');"></div>
     <div class="slide" style="background-image: url('/bg5.jpg');"></div>
 </div>
-
 <div class="scroll-down">
     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="rgba(255,255,255,0.7)" viewBox="0 0 16 16">
       <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1-.708z"/>
     </svg>
 </div>
 
+<!-- 音乐 -->
 <audio id="bg-music" src="/music.mp3" loop></audio>
 <button id="music-btn" style="position: fixed; top: 80px; left: 20px; z-index: 10000; padding: 10px 15px; border-radius: 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;">
     What if God were a girl？
@@ -239,6 +170,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    // --- 1. 轮播图 ---
     var slides = document.querySelectorAll(".slide");
     var currentSlide = 0;
     if (slides.length > 0) {
@@ -250,23 +182,88 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 6000);
     }
 
+    // --- 2. 打字机 ---
     setTimeout(function() {
         var el = document.querySelector('.home-info .entry-content');
         if (el) {
-            var text = el.innerText;
-            el.innerText = "";
-            var i = 0;
-            function type() {
-                if (i < text.length) {
-                    el.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, 150);
-                }
-            }
+            var text = el.innerText; el.innerText = ""; var i = 0;
+            function type() { if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, 150); } }
             type();
         }
     }, 500);
 
+    // --- 3. 动态构建双栏布局（核心魔术） ---
+    var mainContent = document.querySelector('.main');
+    // 只有当在首页且找到了主内容区时才执行
+    if (mainContent && window.location.pathname === '/') {
+        // 提取原本的首页个人信息（如果有的话）
+        var homeInfo = document.querySelector('.home-info');
+        var listContent = document.querySelector('.main .list');
+        
+        // 创建一个外壳，包含左侧文章和右侧边栏
+        var wrapper = document.createElement('div');
+        wrapper.className = 'home-layout-wrapper';
+        
+        var leftCol = document.createElement('div');
+        leftCol.className = 'main-list-col';
+        
+        var rightCol = document.createElement('div');
+        rightCol.className = 'custom-sidebar';
+        
+        // 组装右侧边栏 HTML
+        rightCol.innerHTML = `
+            <!-- 个人名片 -->
+            <div class="sidebar-card profile-card">
+                <img src="/avatar.jpg" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'">
+                <h3>Rodite</h3>
+                <div class="bio">算法竞赛小白 | 持续学习AI中</div>
+                <div class="profile-stats">
+                    <div><span>文章</span>1</div>
+                    <div><span>标签</span>2</div>
+                    <div><span>分类</span>1</div>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/rodite1" target="_blank" title="GitHub">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    </a>
+                    <a href="mailto:your@email.com" title="Email">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 公告 -->
+            <div class="sidebar-card">
+                <h4 style="margin-top:0; color:#fff;">📢 公告</h4>
+                <p style="font-size:0.9rem; margin-bottom:0;">欢迎来到 Rodite 的个人博客 🎉</p>
+            </div>
+            
+            <!-- 标签 -->
+            <div class="sidebar-card">
+                <h4 style="margin-top:0; color:#fff;">🏷️ 标签</h4>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+                    <a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">日常分享</a>
+                    <a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">随笔</a>
+                </div>
+            </div>
+        `;
+
+        // 移动原有的文章列表到左列
+        if (listContent) {
+            leftCol.appendChild(listContent);
+        }
+
+        // 组装 DOM
+        wrapper.appendChild(leftCol);
+        wrapper.appendChild(rightCol);
+        
+        // 将新的 wrapper 替换到主内容区中
+        mainContent.innerHTML = '';
+        mainContent.appendChild(homeInfo); // 保留顶部全屏大图
+        mainContent.appendChild(wrapper); // 加上双列布局
+    }
+
+    // --- 4. 音乐播放 ---
     var music = document.getElementById("bg-music");
     var btn = document.getElementById("music-btn");
     if (music && btn) {
@@ -277,21 +274,52 @@ document.addEventListener("DOMContentLoaded", function() {
             if (savedTime) music.currentTime = parseFloat(savedTime);
             music.play().then(() => { btn.innerHTML = "And so, we met."; }).catch(e => {});
         }
-        music.addEventListener("play", function() {
-            sessionStorage.setItem("musicPlaying", "true");
-            btn.innerHTML = "And so, we met.";
-        });
-        music.addEventListener("pause", function() {
-            sessionStorage.setItem("musicPlaying", "false");
-            btn.innerHTML = "What if God were a girl？";
-        });
-        setInterval(function() {
-            if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime);
-        }, 1000);
-        btn.addEventListener("click", function() {
-            if (music.paused) music.play(); else music.pause();
-        });
+        music.addEventListener("play", function() { sessionStorage.setItem("musicPlaying", "true"); btn.innerHTML = "And so, we met."; });
+        music.addEventListener("pause", function() { sessionStorage.setItem("musicPlaying", "false"); btn.innerHTML = "What if God were a girl？"; });
+        setInterval(function() { if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime); }, 1000);
+        btn.addEventListener("click", function() { if (music.paused) music.play(); else music.pause(); });
     }
 });
 </script>
 {{ end }}
+
+<!-- ==================== 底部访客统计与文章点赞 ==================== -->
+<style>
+    .custom-stats { text-align: center; font-size: 14px; margin-top: 20px; color: #888; padding-bottom: 20px; }
+    .custom-stats span { margin: 0 10px; display: inline-flex; align-items: center; }
+    .post-meta-stats { display: flex; gap: 15px; align-items: center; margin: 15px 0; font-size: 14px; color: #a3a3a3; }
+    .like-btn { cursor: pointer; display: flex; align-items: center; gap: 5px; transition: transform 0.2s; }
+    .like-btn:hover { color: #ff4757; transform: scale(1.1); }
+    .like-btn.liked { color: #ff4757; }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var footer = document.querySelector('.footer');
+    if (footer) {
+        var statsDiv = document.createElement('div'); statsDiv.className = 'custom-stats';
+        statsDiv.innerHTML = `<span>挥一挥衣袖：<span id="busuanzi_value_site_uv"></span> 人</span><span>不带走一片云彩：<span id="busuanzi_value_site_pv"></span> 次</span>`;
+        footer.parentNode.insertBefore(statsDiv, footer.nextSibling);
+    }
+    var isPost = document.querySelector('.post-single');
+    if (isPost) {
+        var postHeader = document.querySelector('.post-header');
+        var postContent = document.querySelector('.post-content');
+        var pageKey = 'like_' + window.location.pathname;
+        var likeCount = localStorage.getItem(pageKey) || 0;
+        var statsHTML = `<div class="post-meta-stats"><div class="busuanzi-page-pv">👁️ 浏览：<span id="busuanzi_value_page_pv">0</span> 次</div><div class="like-btn" id="like-btn-${window.location.pathname.replace(/\//g, '_')}"><span>❤️</span> 点赞：<span class="like-count">${likeCount}</span></div></div>`;
+        if(postHeader) postHeader.insertAdjacentHTML('afterend', statsHTML);
+        if(postContent) postContent.insertAdjacentHTML('beforeend', statsHTML);
+        var btns = document.querySelectorAll('.like-btn');
+        btns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var currentCount = parseInt(localStorage.getItem(pageKey) || 0) + 1;
+                localStorage.setItem(pageKey, currentCount);
+                document.querySelectorAll('.like-count').forEach(el => { el.innerText = currentCount; });
+                btns.forEach(b => b.classList.add('liked'));
+            });
+            if (parseInt(localStorage.getItem(pageKey) || 0) > 0) { btn.classList.add('liked'); }
+        });
+    }
+});
+</script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
