@@ -7,6 +7,7 @@ theme = "PaperMod"
 [params]
   defaultTheme = "light"
   ShowSearch = true
+  ShowCodeCopyButtons = true
   
   # 这里是首页的大标题和打字机文字
   [params.homeInfoParams]
@@ -35,8 +36,4 @@ theme = "PaperMod"
     name = "分类"
     url = "/categories/"
     weight = 4
-  [[menu.main]]
-    identifier = "search"
-    name = "<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='vertical-align: middle; margin-bottom: 2px;'><circle cx='11' cy='11' r='8'></circle><line x1='21' y1='21' x2='16.65' y2='16.65'></line></svg>"
-    url = "/search/"
-    weight = 5
+  
