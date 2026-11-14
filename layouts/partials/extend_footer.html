@@ -117,18 +117,20 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-<!-- ==================== 首页专属特效：轮播图与背景音乐 ==================== -->
 {{ if .IsHome }}
 <style>
+    /* 1. 清理网页底色 */
     html, body, .main, .list, #content, #wrapper, main, .home-info {
         background-color: transparent !important;
         background-image: none !important;
         box-shadow: none !important;
     }
+
+    /* 2. 轮播图与遮罩 */
     #home-slider {
         position: fixed !important;
-        top: 0 !important; left: 0 !important;
-        width: 100vw !important; height: 100vh !important;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
         z-index: -999 !important;
         pointer-events: none;
     }
@@ -138,29 +140,65 @@ document.addEventListener("DOMContentLoaded", function() {
         background-size: cover !important;
         background-position: center !important;
         opacity: 0;
-        transition: opacity 1.5s ease-in-out;
+        transition: opacity 2s ease-in-out;
     }
-    .slide.active {
-        opacity: 1 !important;
-    }
+    .slide.active { opacity: 1 !important; }
     body::before {
         content: "" !important;
         position: fixed !important;
         top: 0; left: 0;
         width: 100vw; height: 100vh;
-        background-color: rgba(0, 0, 0, 0.4) !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
         z-index: -998 !important;
         pointer-events: none;
     }
+
+    /* 3. 强制首屏占满全屏并居中 */
+    .home-info {
+        height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin-top: -60px !important; /* 向上微调避开导航栏 */
+    }
+    .home-info .entry-header h1 {
+        font-size: 4rem !important;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important;
+        margin-bottom: 10px !important;
+    }
+    .home-info .entry-content {
+        font-size: 1.5rem !important;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important;
+    }
+
+    /* 4. 文章卡片毛玻璃 */
     .post-entry, .post-content, .profile_inner {
         background-color: rgba(30, 30, 30, 0.6) !important;
         backdrop-filter: blur(10px) !important;
         -webkit-backdrop-filter: blur(10px) !important;
         border-radius: 12px !important;
         border: 1px solid rgba(255,255,255,0.1) !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* 5. 底部向下箭头 */
+    .scroll-down {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: bounce 2s infinite;
+        z-index: 10;
+    }
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+        40% { transform: translate(-50%, -15px); }
+        60% { transform: translate(-50%, -7px); }
     }
 </style>
 
+<!-- 轮播图 -->
 <div id="home-slider">
     <div class="slide" style="background-image: url('/bg1.jpg');"></div>
     <div class="slide" style="background-image: url('/bg2.jpg');"></div>
@@ -169,6 +207,14 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="slide" style="background-image: url('/bg5.jpg');"></div>
 </div>
 
+<!-- 向下箭头 -->
+<div class="scroll-down">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="rgba(255,255,255,0.7)" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1-.708z"/>
+    </svg>
+</div>
+
+<!-- 音乐部分 -->
 <audio id="bg-music" src="/music.mp3" loop></audio>
 <button id="music-btn" style="position: fixed; top: 80px; left: 20px; z-index: 10000; padding: 10px 15px; border-radius: 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;">
     What if God were a girl？
@@ -176,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    // 轮播图
     var slides = document.querySelectorAll(".slide");
     var currentSlide = 0;
     if (slides.length > 0) {
@@ -187,6 +234,25 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 6000);
     }
 
+    // 打字机特效
+    setTimeout(function() {
+        var el = document.querySelector('.home-info .entry-content');
+        if (el) {
+            var text = el.innerText;
+            el.innerText = "";
+            var i = 0;
+            function type() {
+                if (i < text.length) {
+                    el.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 150); // 150毫秒一个字
+                }
+            }
+            type();
+        }
+    }, 500);
+
+    // 音乐
     var music = document.getElementById("bg-music");
     var btn = document.getElementById("music-btn");
     if (music && btn) {
