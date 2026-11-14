@@ -137,7 +137,70 @@
         <polyline points="17 11 12 6 7 11"></polyline>
         <polyline points="17 18 12 13 7 18"></polyline>
     </svg>
-</a><script src="https://cdn.jsdelivr.net/gh/hawkgs/snow@main/scripts/snow.min.js"></script>
+</a>
+<canvas id="snow-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var canvas = document.getElementById("snow-canvas");
+    var ctx = canvas.getContext("2d");
+    var width = canvas.width = window.innerWidth;
+    var height = canvas.height = window.innerHeight;
+    var flakes = [];
+
+    window.addEventListener("resize", function() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+
+    
+    for (var i = 0; i < 150; i++) { 
+        flakes.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * 3 + 1, 
+            d: Math.random() + 1, 
+            color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")" 
+        });
+    }
+
+    function drawFlakes() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        for (var i = 0; i < flakes.length; i++) {
+            var f = flakes[i];
+            ctx.fillStyle = f.color;
+            ctx.moveTo(f.x, f.y);
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+        }
+        ctx.fill();
+        moveFlakes();
+    }
+
+    var angle = 0;
+    function moveFlakes() {
+        angle += 0.01;
+        for (var i = 0; i < flakes.length; i++) {
+            var f = flakes[i];
+            f.y += Math.pow(f.d, 2) + 0.5;
+            f.x += Math.sin(angle) * 1; 
+
+            
+            if (f.y > height) {
+                flakes[i] = {
+                    x: Math.random() * width,
+                    y: 0,
+                    r: f.r,
+                    d: f.d,
+                    color: f.color
+                };
+            }
+        }
+    }
+
+    setInterval(drawFlakes, 30);
+});
+</script>
 
 <script>
     let menu = document.getElementById('menu');
