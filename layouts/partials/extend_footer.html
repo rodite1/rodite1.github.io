@@ -1,4 +1,68 @@
-<!-- 自定义雪花特效 -->
+<!-- ==================== 导航栏 CSS ==================== -->
+<style>
+    /* 1. 顶部导航栏毛玻璃 */
+    .header {
+        background: rgba(30, 30, 30, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        position: fixed !important;
+        width: 100vw !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1000 !important;
+    }
+
+    /* 2. 强制导航栏两端对齐 */
+    .nav {
+        max-width: 100vw !important;
+        padding: 0 30px !important;
+        display: flex !important;
+        justify-content: space-between !important; 
+        align-items: center !important;
+    }
+
+    /* 3. 菜单和搜索按钮包在一起靠右 */
+    .nav-right {
+        display: flex !important;
+        align-items: center !important;
+        margin-left: auto !important; 
+    }
+
+    /* 4. 菜单项调整 */
+    #menu {
+        display: flex !important;
+        align-items: center !important;
+        margin: 0 !important;
+    }
+
+    #menu a {
+        margin: 0 10px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        padding: 5px 10px !important;
+        border-radius: 8px !important;
+    }
+
+    /* 鼠标悬浮微透明背景 */
+    #menu a:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* 5. 搜索按钮调整 */
+    .search-button {
+        margin-left: 15px !important;
+        display: flex !important; 
+    }
+
+    /* 强制搜索图标变白 */
+    .search-button svg {
+        stroke: #ffffff !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+</style>
+
+<!-- ==================== 雪花特效 ==================== -->
 <canvas id="snow-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -13,14 +77,13 @@ document.addEventListener("DOMContentLoaded", function() {
         height = canvas.height = window.innerHeight;
     });
 
-    // 创建雪花
-    for (var i = 0; i < 150; i++) { // 这里的 150 是雪花数量，可以自己调
+    for (var i = 0; i < 150; i++) {
         flakes.push({
             x: Math.random() * width,
             y: Math.random() * height,
-            r: Math.random() * 3 + 1, // 雪花半径
-            d: Math.random() + 1, // 下落速度
-            color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")" // 半透明
+            r: Math.random() * 3 + 1,
+            d: Math.random() + 1,
+            color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")"
         });
     }
 
@@ -44,49 +107,34 @@ document.addEventListener("DOMContentLoaded", function() {
         for (var i = 0; i < flakes.length; i++) {
             var f = flakes[i];
             f.y += Math.pow(f.d, 2) + 0.5;
-            f.x += Math.sin(angle) * 1; // 左右飘动
-
-            // 如果雪花到底部，重新放到顶部
+            f.x += Math.sin(angle) * 1;
             if (f.y > height) {
-                flakes[i] = {
-                    x: Math.random() * width,
-                    y: 0,
-                    r: f.r,
-                    d: f.d,
-                    color: f.color
-                };
+                flakes[i] = { x: Math.random() * width, y: 0, r: f.r, d: f.d, color: f.color };
             }
         }
     }
-
     setInterval(drawFlakes, 30);
 });
 </script>
 
-
+<!-- ==================== 首页专属特效：轮播图与背景音乐 ==================== -->
 {{ if .IsHome }}
-<!-- 暴力清除所有网页底色 -->
 <style>
     html, body, .main, .list, #content, #wrapper, main, .home-info {
         background-color: transparent !important;
         background-image: none !important;
         box-shadow: none !important;
     }
-
-    /* 轮播图容器，强制压在最深处 */
     #home-slider {
         position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
+        top: 0 !important; left: 0 !important;
+        width: 100vw !important; height: 100vh !important;
         z-index: -999 !important;
         pointer-events: none;
     }
     .slide {
         position: absolute;
-        width: 100%;
-        height: 100%;
+        width: 100%; height: 100%;
         background-size: cover !important;
         background-position: center !important;
         opacity: 0;
@@ -95,19 +143,15 @@ document.addEventListener("DOMContentLoaded", function() {
     .slide.active {
         opacity: 1 !important;
     }
-
-    /* 黑色遮罩，挡在图片上面，文字下面 */
     body::before {
         content: "" !important;
         position: fixed !important;
         top: 0; left: 0;
         width: 100vw; height: 100vh;
-        background-color: rgba(0, 0, 0, 0.4) !important; /* 想调暗就改 0.4 */
+        background-color: rgba(0, 0, 0, 0.4) !important;
         z-index: -998 !important;
         pointer-events: none;
     }
-
-    /* 文章卡片毛玻璃 */
     .post-entry, .post-content, .profile_inner {
         background-color: rgba(30, 30, 30, 0.6) !important;
         backdrop-filter: blur(10px) !important;
@@ -117,7 +161,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 </style>
 
-<!-- 轮播图 -->
 <div id="home-slider">
     <div class="slide" style="background-image: url('/bg1.jpg');"></div>
     <div class="slide" style="background-image: url('/bg2.jpg');"></div>
@@ -126,7 +169,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="slide" style="background-image: url('/bg5.jpg');"></div>
 </div>
 
-<!-- 音乐 -->
 <audio id="bg-music" src="/music.mp3" loop></audio>
 <button id="music-btn" style="position: fixed; top: 80px; left: 20px; z-index: 10000; padding: 10px 15px; border-radius: 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;">
     What if God were a girl？
@@ -134,7 +176,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // 轮播
     var slides = document.querySelectorAll(".slide");
     var currentSlide = 0;
     if (slides.length > 0) {
@@ -146,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 6000);
     }
 
-    // 音乐
     var music = document.getElementById("bg-music");
     var btn = document.getElementById("music-btn");
     if (music && btn) {
