@@ -16,13 +16,15 @@
     /* 搜索页美化 */
     .search-input { background: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; border-radius: 12px !important; color: #fff !important; padding: 15px 20px !important; font-size: 16px !important; width: 100% !important; outline: none !important; }
 
-    /* ==================== 侧边栏与双列布局核心 CSS ==================== */
-    .home-layout-wrapper {
-        display: flex !important; justify-content: space-between !important; align-items: flex-start !important;
-        max-width: 1200px !important; margin: 0 auto !important; padding: 20px !important; gap: 30px !important;
+    /* ==================== 侧边栏与双列布局核心 CSS (无需JS移动) ==================== */
+    .home-info { width: 100% !important; }
+    
+    /* 侧边栏卡片样式 */
+    .custom-sidebar {
+        display: flex !important; flex-direction: column !important; gap: 20px !important;
+        width: 320px !important; flex-shrink: 0 !important;
+        position: sticky !important; top: 100px !important; /* 跟随滚动 */
     }
-    .main-list-col { flex: 1 !important; min-width: 0 !important; }
-    .custom-sidebar { width: 320px !important; flex-shrink: 0 !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
     .sidebar-card {
         background: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important;
         border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 20px !important; color: #ccc !important;
@@ -37,47 +39,63 @@
     .social-links { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
     .social-links a { color: #aaa; transition: color 0.3s; }
     .social-links a:hover { color: #fff; }
-    @media (max-width: 768px) { .home-layout-wrapper { flex-direction: column !important; } .custom-sidebar { width: 100% !important; } }
+
+    @media (max-width: 768px) {
+        .custom-sidebar { width: 100% !important; position: relative !important; top: 0 !important; margin-top: 30px !important; }
+    }
 </style>
 
 <!-- ==================== 雪花特效 ==================== -->
 <canvas id="snow-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    var canvas = document.getElementById("snow-canvas");
-    var ctx = canvas.getContext("2d");
-    var width = canvas.width = window.innerWidth; var height = canvas.height = window.innerHeight;
-    var flakes = [];
-    window.addEventListener("resize", function() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; });
-    for (var i = 0; i < 150; i++) { flakes.push({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 3 + 1, d: Math.random() + 1, color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")" }); }
-    function drawFlakes() {
-        ctx.clearRect(0, 0, width, height); ctx.fillStyle = "white"; ctx.beginPath();
-        for (var i = 0; i < flakes.length; i++) { var f = flakes[i]; ctx.fillStyle = f.color; ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true); }
-        ctx.fill(); moveFlakes();
-    }
-    var angle = 0;
-    function moveFlakes() {
-        angle += 0.01;
-        for (var i = 0; i < flakes.length; i++) { var f = flakes[i]; f.y += Math.pow(f.d, 2) + 0.5; f.x += Math.sin(angle) * 1; if (f.y > height) { flakes[i] = { x: Math.random() * width, y: 0, r: f.r, d: f.d, color: f.color }; } }
-    }
-    setInterval(drawFlakes, 30);
+    try {
+        var canvas = document.getElementById("snow-canvas");
+        var ctx = canvas.getContext("2d");
+        var width = canvas.width = window.innerWidth; var height = canvas.height = window.innerHeight;
+        var flakes = [];
+        window.addEventListener("resize", function() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; });
+        for (var i = 0; i < 150; i++) { flakes.push({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 3 + 1, d: Math.random() + 1, color: "rgba(255, 255, 255, " + (Math.random() * 0.5 + 0.3) + ")" }); }
+        function drawFlakes() {
+            ctx.clearRect(0, 0, width, height); ctx.fillStyle = "white"; ctx.beginPath();
+            for (var i = 0; i < flakes.length; i++) { var f = flakes[i]; ctx.fillStyle = f.color; ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true); }
+            ctx.fill(); moveFlakes();
+        }
+        var angle = 0;
+        function moveFlakes() {
+            angle += 0.01;
+            for (var i = 0; i < flakes.length; i++) { var f = flakes[i]; f.y += Math.pow(f.d, 2) + 0.5; f.x += Math.sin(angle) * 1; if (f.y > height) { flakes[i] = { x: Math.random() * width, y: 0, r: f.r, d: f.d, color: f.color }; } }
+        }
+        setInterval(drawFlakes, 30);
+    } catch(e) { console.log("雪花加载失败", e); }
 });
 </script>
 
 <!-- ==================== 首页专属特效 ==================== -->
 {{ if .IsHome }}
 <style>
+    /* 首屏全屏样式 */
     html, body, .main, .list, #content, #wrapper, main, .home-info { background-color: transparent !important; background-image: none !important; box-shadow: none !important; }
     #home-slider { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -999 !important; pointer-events: none; }
     .slide { position: absolute; width: 100%; height: 100%; background-size: cover !important; background-position: center !important; opacity: 0; transition: opacity 2s ease-in-out; }
     .slide.active { opacity: 1 !important; }
     body::before { content: "" !important; position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5) !important; z-index: -998 !important; pointer-events: none; }
+    
     .home-info { height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; margin-top: -60px !important; }
     .home-info .entry-header h1 { font-size: 4rem !important; text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important; margin-bottom: 10px !important; }
     .home-info .entry-content { font-size: 1.5rem !important; text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important; }
     .post-entry, .post-content, .profile_inner { background-color: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important; margin-bottom: 20px !important; }
+    
     .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; z-index: 10; }
     @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -15px); } 60% { transform: translate(-50%, -7px); } }
+
+    /* 核心布局：利用 CSS 强制把所有文章推到左边 */
+    @media (min-width: 768px) {
+        .main { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; gap: 30px !important; padding: 0 20px !important; }
+        .home-info { flex-basis: 100% !important; }
+        .main > .post-entry { flex: 1 1 calc(100% - 380px) !important; max-width: 800px !important; }
+        .custom-sidebar { margin-top: 0 !important; }
+    }
 </style>
 
 <div id="home-slider">
@@ -96,86 +114,72 @@ document.addEventListener("DOMContentLoaded", function() {
     What if God were a girl？
 </button>
 
+<!-- 侧边栏 HTML 直接写在这里，不用 JS 去拼装 -->
+<div class="custom-sidebar" id="global-sidebar" style="display:none;">
+    <div class="sidebar-card profile-card">
+        <img src="/avatar.jpg" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'">
+        <h3>Rodite</h3>
+        <div class="bio">算法竞赛小白 | 持续学习AI中</div>
+        <div class="profile-stats">
+            <div><span>文章</span>1</div>
+            <div><span>标签</span>2</div>
+            <div><span>分类</span>1</div>
+        </div>
+        <div class="social-links">
+            <a href="https://github.com/rodite1" target="_blank" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+            <a href="mailto:your@email.com" title="Email"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a>
+        </div>
+    </div>
+    <div class="sidebar-card"><h4 style="margin-top:0; color:#fff;">📢 公告</h4><p style="font-size:0.9rem; margin-bottom:0;">欢迎来到 Rodite 的个人博客 🎉</p></div>
+    <div class="sidebar-card"><h4 style="margin-top:0; color:#fff;">🏷️ 标签</h4><div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"><a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">日常分享</a><a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">随笔</a></div></div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // 1. 轮播图
-    var slides = document.querySelectorAll(".slide");
-    var currentSlide = 0;
-    if (slides.length > 0) {
-        slides[0].classList.add("active");
-        setInterval(function() { slides[currentSlide].classList.remove("active"); currentSlide = (currentSlide + 1) % slides.length; slides[currentSlide].classList.add("active"); }, 6000);
-    }
-
-    // 2. 打字机
-    setTimeout(function() {
-        var el = document.querySelector('.home-info .entry-content');
-        if (el) {
-            var text = el.innerText; el.innerText = ""; var i = 0;
-            function type() { if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, 150); } }
-            type();
+    try {
+        // 1. 轮播图
+        var slides = document.querySelectorAll(".slide");
+        var currentSlide = 0;
+        if (slides.length > 0) {
+            slides[0].classList.add("active");
+            setInterval(function() { slides[currentSlide].classList.remove("active"); currentSlide = (currentSlide + 1) % slides.length; slides[currentSlide].classList.add("active"); }, 6000);
         }
-    }, 500);
 
-    // 3. 安全的双栏布局（只做追加，不清空原有内容）
-    var mainContent = document.querySelector('.main');
-    if (mainContent && window.location.pathname === '/') {
-        var homeInfo = document.querySelector('.home-info');
-        var postEntries = document.querySelectorAll('.main .post-entry'); // 抓取所有文章
-        
-        if (homeInfo && postEntries.length > 0) {
-            var wrapper = document.createElement('div');
-            wrapper.className = 'home-layout-wrapper';
-            
-            var leftCol = document.createElement('div');
-            leftCol.className = 'main-list-col';
-            // 把原有的文章挪到左列
-            postEntries.forEach(function(entry) { leftCol.appendChild(entry); });
-            
-            var rightCol = document.createElement('div');
-            rightCol.className = 'custom-sidebar';
-            rightCol.innerHTML = `
-                <div class="sidebar-card profile-card">
-                    <img src="/avatar.jpg" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'">
-                    <h3>Rodite</h3>
-                    <div class="bio">算法竞赛小白 | 持续学习AI中</div>
-                    <div class="profile-stats">
-                        <div><span>文章</span>1</div>
-                        <div><span>标签</span>2</div>
-                        <div><span>分类</span>1</div>
-                    </div>
-                    <div class="social-links">
-                        <a href="https://github.com/rodite1" target="_blank" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
-                        <a href="mailto:your@email.com" title="Email"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a>
-                    </div>
-                </div>
-                <div class="sidebar-card"><h4 style="margin-top:0; color:#fff;">📢 公告</h4><p style="font-size:0.9rem; margin-bottom:0;">欢迎来到 Rodite 的个人博客 🎉</p></div>
-                <div class="sidebar-card"><h4 style="margin-top:0; color:#fff;">🏷️ 标签</h4><div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"><a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">日常分享</a><a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">随笔</a></div></div>
-            `;
-            
-            wrapper.appendChild(leftCol);
-            wrapper.appendChild(rightCol);
-            
-            // 把组装好的双栏结构插入到 homeInfo 后面（不破坏原生结构）
-            homeInfo.parentNode.insertBefore(wrapper, homeInfo.nextSibling);
-        }
-    }
+        // 2. 打字机
+        setTimeout(function() {
+            var el = document.querySelector('.home-info .entry-content');
+            if (el && el.innerText.trim() !== "") {
+                var text = el.innerText; el.innerText = ""; var i = 0;
+                function type() { if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, 150); } }
+                type();
+            }
+        }, 500);
 
-    // 4. 音乐播放
-    var music = document.getElementById("bg-music");
-    var btn = document.getElementById("music-btn");
-    if (music && btn) {
-        music.volume = 0.4;
-        var wasPlaying = sessionStorage.getItem("musicPlaying") === "true";
-        var savedTime = sessionStorage.getItem("musicTime");
-        if (wasPlaying) {
-            if (savedTime) music.currentTime = parseFloat(savedTime);
-            music.play().then(() => { btn.innerHTML = "And so, we met."; }).catch(e => {});
+        // 3. 将侧边栏安全插入到文章列表中 (直接 append 到主容器)
+        var mainContainer = document.querySelector('.main');
+        var sidebar = document.getElementById('global-sidebar');
+        if (mainContainer && sidebar) {
+            sidebar.style.display = 'flex'; // 显示侧边栏
+            mainContainer.appendChild(sidebar); // 直接放进主容器，CSS会自动让它跑到右侧去
         }
-        music.addEventListener("play", function() { sessionStorage.setItem("musicPlaying", "true"); btn.innerHTML = "And so, we met."; });
-        music.addEventListener("pause", function() { sessionStorage.setItem("musicPlaying", "false"); btn.innerHTML = "What if God were a girl？"; });
-        setInterval(function() { if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime); }, 1000);
-        btn.addEventListener("click", function() { if (music.paused) music.play(); else music.pause(); });
-    }
+
+        // 4. 音乐播放
+        var music = document.getElementById("bg-music");
+        var btn = document.getElementById("music-btn");
+        if (music && btn) {
+            music.volume = 0.4;
+            var wasPlaying = sessionStorage.getItem("musicPlaying") === "true";
+            var savedTime = sessionStorage.getItem("musicTime");
+            if (wasPlaying) {
+                if (savedTime) music.currentTime = parseFloat(savedTime);
+                music.play().then(() => { btn.innerHTML = "And so, we met."; }).catch(e => {});
+            }
+            music.addEventListener("play", function() { sessionStorage.setItem("musicPlaying", "true"); btn.innerHTML = "And so, we met."; });
+            music.addEventListener("pause", function() { sessionStorage.setItem("musicPlaying", "false"); btn.innerHTML = "What if God were a girl？"; });
+            setInterval(function() { if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime); }, 1000);
+            btn.addEventListener("click", function() { if (music.paused) music.play(); else music.pause(); });
+        }
+    } catch(e) { console.log("首页特效加载中断", e); }
 });
 </script>
 {{ end }}
@@ -191,32 +195,34 @@ document.addEventListener("DOMContentLoaded", function() {
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    var footer = document.querySelector('.footer');
-    if (footer) {
-        var statsDiv = document.createElement('div'); statsDiv.className = 'custom-stats';
-        statsDiv.innerHTML = `<span>挥一挥衣袖：<span id="busuanzi_value_site_uv"></span> 人</span><span>不带走一片云彩：<span id="busuanzi_value_site_pv"></span> 次</span>`;
-        footer.parentNode.insertBefore(statsDiv, footer.nextSibling);
-    }
-    var isPost = document.querySelector('.post-single');
-    if (isPost) {
-        var postHeader = document.querySelector('.post-header');
-        var postContent = document.querySelector('.post-content');
-        var pageKey = 'like_' + window.location.pathname;
-        var likeCount = localStorage.getItem(pageKey) || 0;
-        var statsHTML = `<div class="post-meta-stats"><div class="busuanzi-page-pv">👁️ 浏览：<span id="busuanzi_value_page_pv">0</span> 次</div><div class="like-btn"><span>❤️</span> 点赞：<span class="like-count">${likeCount}</span></div></div>`;
-        if(postHeader) postHeader.insertAdjacentHTML('afterend', statsHTML);
-        if(postContent) postContent.insertAdjacentHTML('beforeend', statsHTML);
-        var btns = document.querySelectorAll('.like-btn');
-        btns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var currentCount = parseInt(localStorage.getItem(pageKey) || 0) + 1;
-                localStorage.setItem(pageKey, currentCount);
-                document.querySelectorAll('.like-count').forEach(el => { el.innerText = currentCount; });
-                btns.forEach(b => b.classList.add('liked'));
+    try {
+        var footer = document.querySelector('.footer');
+        if (footer) {
+            var statsDiv = document.createElement('div'); statsDiv.className = 'custom-stats';
+            statsDiv.innerHTML = `<span>挥一挥衣袖：<span id="busuanzi_value_site_uv"></span> 人</span><span>不带走一片云彩：<span id="busuanzi_value_site_pv"></span> 次</span>`;
+            footer.parentNode.insertBefore(statsDiv, footer.nextSibling);
+        }
+        var isPost = document.querySelector('.post-single');
+        if (isPost) {
+            var postHeader = document.querySelector('.post-header');
+            var postContent = document.querySelector('.post-content');
+            var pageKey = 'like_' + window.location.pathname;
+            var likeCount = localStorage.getItem(pageKey) || 0;
+            var statsHTML = `<div class="post-meta-stats"><div class="busuanzi-page-pv">👁️ 浏览：<span id="busuanzi_value_page_pv">0</span> 次</div><div class="like-btn"><span>❤️</span> 点赞：<span class="like-count">${likeCount}</span></div></div>`;
+            if(postHeader) postHeader.insertAdjacentHTML('afterend', statsHTML);
+            if(postContent) postContent.insertAdjacentHTML('beforeend', statsHTML);
+            var btns = document.querySelectorAll('.like-btn');
+            btns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var currentCount = parseInt(localStorage.getItem(pageKey) || 0) + 1;
+                    localStorage.setItem(pageKey, currentCount);
+                    document.querySelectorAll('.like-count').forEach(el => { el.innerText = currentCount; });
+                    btns.forEach(b => b.classList.add('liked'));
+                });
+                if (parseInt(localStorage.getItem(pageKey) || 0) > 0) { btn.classList.add('liked'); }
             });
-            if (parseInt(localStorage.getItem(pageKey) || 0) > 0) { btn.classList.add('liked'); }
-        });
-    }
+        }
+    } catch(e) { console.log("底部统计加载中断", e); }
 });
 </script>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
