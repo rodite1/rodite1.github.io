@@ -61,6 +61,11 @@ theme = "PaperMod"
     url = "/search/"
     weight = 5
 
-# 开启搜索索引生成
+# 开启搜索索引生成（secretjson：隐藏区索引，仅验证后前端加载）
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "secretjson"]
+
+[outputFormats.secretjson]
+  mediaType = "application/json"
+  baseName = "secret"
+  isPlainText = true

@@ -20,8 +20,61 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<!-- ==================== 银白色鼠标拖尾（全站） ==================== -->
+<canvas id="cursor-trail" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998;"></canvas>
+<script>
+(function() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var canvas = document.getElementById("cursor-trail");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0;
+    function resize() {
+        W = canvas.width = window.innerWidth * dpr;
+        H = canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    var pts = [];
+    function addPoint(x, y) {
+        pts.push({ x: x, y: y, r: 1 + Math.random() * 1.8, life: 1, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6 + 0.3 });
+        if (pts.length > 260) pts.shift();
+    }
+    window.addEventListener("mousemove", function(e) {
+        addPoint(e.clientX, e.clientY);
+        if (Math.random() < 0.35) addPoint(e.clientX + (Math.random() - 0.5) * 8, e.clientY + (Math.random() - 0.5) * 8);
+    }, { passive: true });
+    window.addEventListener("touchmove", function(e) {
+        var t = e.touches[0];
+        if (t) addPoint(t.clientX, t.clientY);
+    }, { passive: true });
+
+    function loop() {
+        ctx.clearRect(0, 0, W, H);
+        for (var i = pts.length - 1; i >= 0; i--) {
+            var p = pts[i];
+            p.life -= 0.03;
+            if (p.life <= 0) { pts.splice(i, 1); continue; }
+            p.x += p.vx;
+            p.y += p.vy;
+            p.r *= 0.985;
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(228, 232, 245, " + (p.life * 0.75).toFixed(3) + ")";
+            ctx.arc(p.x * dpr, p.y * dpr, p.r * dpr, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+})();
+</script>
+
 {{ if .IsHome }}
-<!-- ==================== 首页特效：轮播 / 打字机 / 音乐 / 隐藏区解锁 ==================== -->
+<!-- ==================== 首页特效：轮播 / 打字机循环 ==================== -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // 1. 背景轮播
@@ -36,60 +89,39 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 6000);
     }
 
-    // 2. 打字机
+    // 2. 打字机：打出 → 停顿 → 缓缓退格 → 停顿 → 再打出，无限循环
     var typingEl = document.getElementById("typing-text");
     if (typingEl) {
         var text = typingEl.getAttribute("data-text") || "";
         typingEl.textContent = "";
         var i = 0;
-        function type() {
-            if (i < text.length) {
-                typingEl.textContent += text.charAt(i);
-                i++;
-                setTimeout(type, 150);
-            }
-        }
-        setTimeout(type, 600);
-    }
-
-    // 3. 背景音乐（跨页记忆播放状态）
-    var music = document.getElementById("bg-music"); var btn = document.getElementById("music-btn");
-    if (music && btn) {
-        music.volume = 0.4;
-        var wasPlaying = sessionStorage.getItem("musicPlaying") === "true";
-        var savedTime = sessionStorage.getItem("musicTime");
-        if (wasPlaying) {
-            if (savedTime) music.currentTime = parseFloat(savedTime);
-            music.play().then(() => { btn.innerHTML = "And so, we met."; }).catch(e => {});
-        }
-        music.addEventListener("play", function() { sessionStorage.setItem("musicPlaying", "true"); btn.innerHTML = "And so, we met."; });
-        music.addEventListener("pause", function() { sessionStorage.setItem("musicPlaying", "false"); btn.innerHTML = "What if God were a girl？"; });
-        setInterval(function() { if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime); }, 1000);
-        btn.addEventListener("click", function() { if (music.paused) music.play(); else music.pause(); });
-    }
-
-    // 4. 隐藏区登录验证
-    var loginBtn = document.getElementById("login-btn");
-    if (loginBtn) {
-        loginBtn.addEventListener("click", function() {
-            var userVal = document.getElementById("login-user").value;
-            var posVal = document.getElementById("login-pos").value;
-            var timeVal = document.getElementById("login-time").value;
-            var msg = document.getElementById("login-msg");
-
-            if (userVal === 'FQY' && posVal === 'HYSX' && timeVal === '2018') {
-                msg.style.color = '#2ed573';
-                msg.innerText = '验证成功，隐藏文章已显示！';
-                msg.style.display = 'block';
-                document.querySelectorAll('.secret-card').forEach(function(card) {
-                    card.hidden = false;
-                });
+        var deleting = false;
+        var TYPE_MS = 140;    // 打字节奏：每字符 140ms
+        var BACK_MS = 80;     // 退格节奏：每字符 80ms，同样缓
+        var HOLD_FULL = 1800; // 打完停顿
+        var HOLD_EMPTY = 600; // 退完停顿
+        function tick() {
+            if (!deleting) {
+                if (i < text.length) {
+                    typingEl.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(tick, TYPE_MS);
+                } else {
+                    deleting = true;
+                    setTimeout(tick, HOLD_FULL);
+                }
             } else {
-                msg.style.color = '#ff4757';
-                msg.innerText = '密码或口令错误';
-                msg.style.display = 'block';
+                if (i > 0) {
+                    i--;
+                    typingEl.textContent = text.slice(0, i);
+                    setTimeout(tick, BACK_MS);
+                } else {
+                    deleting = false;
+                    setTimeout(tick, HOLD_EMPTY);
+                }
             }
-        });
+        }
+        setTimeout(tick, 600);
     }
 });
 </script>

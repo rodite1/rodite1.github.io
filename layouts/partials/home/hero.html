@@ -1,6 +1,3 @@
-{{- $mainSections := site.Params.mainSections | default (slice "posts") }}
-{{- $posts := where site.RegularPages "Type" "in" $mainSections }}
-{{- $public := where $posts "Section" "!=" "secret" }}
 {{- $covers := site.Params.defaultCovers | default (slice "/bg1.jpg") }}
 
 <section class="hero">
@@ -12,41 +9,10 @@
     </div>
 
     <div class="hero-inner">
-        {{- with site.Params.profile.avatar }}
-        <img class="hero-avatar" src="{{ . | absURL }}" alt="avatar">
-        {{- end }}
-
         <h1 class="hero-title">{{ site.Title }}</h1>
 
         {{- with site.Params.heroSubtitle }}
         <p class="hero-subtitle" id="typing-text" data-text="{{ . }}"></p>
         {{- end }}
-
-        <div class="hero-stats">
-            <a class="hero-stat" href="{{ "/archives/" | absLangURL }}">
-                <span class="hero-stat-num">{{ len $public }}</span>
-                <span class="hero-stat-label">文章</span>
-            </a>
-            <a class="hero-stat" href="{{ "/tags/" | absLangURL }}">
-                <span class="hero-stat-num">{{ len site.Taxonomies.tags }}</span>
-                <span class="hero-stat-label">标签</span>
-            </a>
-            <a class="hero-stat" href="{{ "/categories/" | absLangURL }}">
-                <span class="hero-stat-num">{{ len site.Taxonomies.categories }}</span>
-                <span class="hero-stat-label">分类</span>
-            </a>
-        </div>
-
-        <div class="hero-social">
-            {{ partial "social_icons.html" (dict "align" "center") }}
-        </div>
-
-        <div class="scroll-down" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="rgba(255,255,255,0.7)" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1-.708z"/></svg>
-        </div>
     </div>
-
-    {{- /* 背景音乐（首页专属） */}}
-    <audio id="bg-music" src="/music.mp3" loop preload="none"></audio>
-    <button id="music-btn" type="button">What if God were a girl？</button>
 </section>
