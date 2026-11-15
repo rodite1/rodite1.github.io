@@ -7,7 +7,7 @@ theme = "PaperMod"
   defaultTheme = "dark"
   ShowSearch = true
   ShowCodeCopyButtons = true
-
+  mainSections = ["posts", "secret"]
   # ====== 社交图标（添加邮箱和 GitHub） ======
   [[params.socialIcons]]
     name = "github"
