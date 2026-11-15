@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .slide.active { opacity: 1 !important; }
     body::before { content: "" !important; position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5) !important; z-index: -998 !important; pointer-events: none; }
     
-    /* 强行让原生首页大标题占满全屏 */
+    /* 强行让原生首页大标题占满全屏，并垂直居中 */
     .home-info {
         height: 100vh !important;
         display: flex !important;
@@ -109,6 +109,11 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="slide" style="background-image: url('/bg5.jpg');"></div>
 </div>
 
+<!-- 向下箭头 -->
+<div class="scroll-down">
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="rgba(255,255,255,0.7)" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1-.708z"/></svg>
+</div>
+
 <audio id="bg-music" src="/music.mp3" loop></audio>
 <button id="music-btn" style="position: fixed; top: 80px; left: 20px; z-index: 10000; padding: 10px 15px; border-radius: 20px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; backdrop-filter: blur(5px); font-size: 14px;">
     What if God were a girl？
@@ -120,7 +125,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="sidebar-card profile-card">
         <img src="/avatar.jpg" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'">
         <h3>Rodite</h3>
-        <!-- 这里就是改成两行的简介 -->
         <div class="bio">星星眨眼本就不可思议<br>请别责怪它不为你指路</div>
         <div class="profile-stats">
             <div><span>文章</span>1</div>
@@ -161,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(function() { slides[currentSlide].classList.remove("active"); currentSlide = (currentSlide + 1) % slides.length; slides[currentSlide].classList.add("active"); }, 6000);
     }
 
-    // 2. 启动打字机 (直接抓取原生文字)
+    // 2. 启动打字机
     setTimeout(function() {
         var el = document.querySelector('.home-info .entry-content') || document.querySelector('.home-info p');
         if (el && el.innerText.trim() !== "") {
@@ -179,15 +183,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }, 500);
 
-    // 3. 核心布局魔法：不破坏原生结构，只在下面追加双栏
+    // 3. 核心布局魔法：将双栏追加到大屏幕正下方
     var mainContainer = document.querySelector('.main');
-    if (mainContainer) {
+    var homeInfo = document.querySelector('.home-info');
+    
+    if (mainContainer && homeInfo) {
         var posts = document.querySelectorAll('.main .post-entry');
         var sidebar = document.getElementById('global-sidebar');
 
-        // 只有当有文章时才执行布局重排
         if (posts.length > 0) {
-            // 创建左右两栏容器
             var wrapper = document.createElement('div');
             wrapper.className = 'home-content-wrapper';
             
@@ -197,9 +201,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var rightCol = document.createElement('div');
             rightCol.className = 'sidebar-col';
 
-            // 把原生的文章搬进左栏
             posts.forEach(function(post) {
-                // 隐藏逻辑
                 if (post.getAttribute('href') && post.getAttribute('href').includes('/secret/')) {
                     post.style.display = 'none';
                     post.classList.add('secret-article');
@@ -207,17 +209,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 leftCol.appendChild(post);
             });
 
-            // 把侧边栏塞进右栏
             if (sidebar) {
                 sidebar.style.display = 'flex';
                 sidebar.style.flexDirection = 'column';
                 rightCol.appendChild(sidebar);
             }
 
-            // 组装并追加到 main 的末尾
             wrapper.appendChild(leftCol);
             wrapper.appendChild(rightCol);
-            mainContainer.appendChild(wrapper);
+
+            // 【最关键的一步】：把拼装好的双栏，插入到 homeInfo (大标题) 的正后方！
+            homeInfo.insertAdjacentElement('afterend', wrapper);
         }
 
         // ===== 4. 登录验证逻辑 =====
