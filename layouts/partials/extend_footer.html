@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
         margin-top: 0 !important;
         position: relative !important;
         width: 100% !important;
+        text-align: center !important;
     }
     .home-info .entry-header h1 { font-size: 4rem !important; text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important; margin-bottom: 10px !important; font-weight: 700; color: #fff; }
     .home-info .entry-content { font-size: 1.5rem !important; text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important; color: #ccc; }
@@ -183,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }, 500);
 
-    // 3. 核心布局魔法：将双栏追加到大屏幕正下方
+    // 3. 核心布局魔法：最安全的挂载方式
     var mainContainer = document.querySelector('.main');
     var homeInfo = document.querySelector('.home-info');
     
@@ -201,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
             var rightCol = document.createElement('div');
             rightCol.className = 'sidebar-col';
 
+            // 迁移文章并判断隐藏
             posts.forEach(function(post) {
                 if (post.getAttribute('href') && post.getAttribute('href').includes('/secret/')) {
                     post.style.display = 'none';
@@ -209,6 +211,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 leftCol.appendChild(post);
             });
 
+            // 迁移侧边栏
             if (sidebar) {
                 sidebar.style.display = 'flex';
                 sidebar.style.flexDirection = 'column';
@@ -218,8 +221,8 @@ document.addEventListener("DOMContentLoaded", function() {
             wrapper.appendChild(leftCol);
             wrapper.appendChild(rightCol);
 
-            // 【最关键的一步】：把拼装好的双栏，插入到 homeInfo (大标题) 的正后方！
-            homeInfo.insertAdjacentElement('afterend', wrapper);
+            // 把 wrapper 加在 homeInfo 正下方（只要不加进 homeInfo 内部，就不会被 flex 挤跑）
+            mainContainer.appendChild(wrapper);
         }
 
         // ===== 4. 登录验证逻辑 =====
@@ -260,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function() {
         music.addEventListener("play", function() { sessionStorage.setItem("musicPlaying", "true"); btn.innerHTML = "And so, we met."; });
         music.addEventListener("pause", function() { sessionStorage.setItem("musicPlaying", "false"); btn.innerHTML = "What if God were a girl？"; });
         setInterval(function() { if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime); }, 1000);
-        btn.addEventListener("click", function() { if (music.paused) music.play(); else music.pause(); });
+        btn.addEventListener('click', function() { if (music.paused) music.play(); else music.pause(); });
     }
 });
 </script>
