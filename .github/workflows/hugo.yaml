@@ -33,6 +33,11 @@ jobs:
       - name: Build
         run: hugo --minify
 
+      - name: Encrypt secret index
+        run: node scripts/encrypt-secret.mjs public
+        env:
+          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

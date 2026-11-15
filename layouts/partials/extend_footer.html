@@ -73,8 +73,108 @@ document.addEventListener("DOMContentLoaded", function() {
 })();
 </script>
 
+<!-- ==================== 隐藏内容解密模块（全站，Web Crypto） ==================== -->
+<script>
+var SecretVault = (function() {
+    var SECRET_URL = "/secret.json";
+    var metaPromise = null;
+
+    function b64ToBuf(b64) {
+        var bin = atob(b64);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return bytes.buffer;
+    }
+    function bufToB64(buf) {
+        var bytes = new Uint8Array(buf);
+        var bin = "";
+        for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        return btoa(bin);
+    }
+
+    function loadMeta() {
+        if (!metaPromise) {
+            metaPromise = fetch(SECRET_URL, { cache: "no-store" })
+                .then(function(r) { if (!r.ok) throw new Error("secret meta " + r.status); return r.json(); })
+                .catch(function() { return null; });
+        }
+        return metaPromise;
+    }
+
+    function deriveKey(password, meta) {
+        var enc = new TextEncoder();
+        return crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"])
+            .then(function(km) {
+                return crypto.subtle.deriveKey(
+                    { name: "PBKDF2", salt: b64ToBuf(meta.kdf.salt), iterations: meta.kdf.iterations, hash: "SHA-256" },
+                    km,
+                    { name: "AES-GCM", length: 256 },
+                    false,
+                    ["decrypt"]
+                );
+            });
+    }
+
+    function decryptItem(key, item) {
+        var raw = new Uint8Array(b64ToBuf(item.c));
+        var iv = raw.slice(0, 12);
+        var ct = raw.slice(12);
+        return crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ct)
+            .then(function(pt) { return JSON.parse(new TextDecoder().decode(pt)); })
+            .catch(function() { return null; });
+    }
+
+    function exportKeyB64(key) { return crypto.subtle.exportKey("raw", key).then(bufToB64); }
+    function importKeyB64(b64) {
+        return crypto.subtle.importKey("raw", b64ToBuf(b64), "AES-GCM", false, ["decrypt"]);
+    }
+
+    // 用口令尝试解锁：成功返回 CryptoKey，失败返回 null
+    function unlock(password) {
+        return loadMeta().then(function(meta) {
+            if (!meta || !meta.items || !meta.items.length) return null;
+            return deriveKey(password, meta).then(function(key) {
+                return decryptItem(key, meta.items[0]).then(function(first) {
+                    if (first === null) return null;
+                    return exportKeyB64(key).then(function(b64) {
+                        try { sessionStorage.setItem("secretKey", b64); } catch (e) {}
+                        return key;
+                    });
+                });
+            });
+        });
+    }
+
+    // 从本会话已保存的密钥恢复（无则 null）
+    function sessionKey() {
+        var b64 = null;
+        try { b64 = sessionStorage.getItem("secretKey"); } catch (e) {}
+        if (!b64) return Promise.resolve(null);
+        return importKeyB64(b64).catch(function() { return null; });
+    }
+
+    // 解密全部隐藏条目（title/date/tags/categories/contents/html/permalink）
+    function items(key) {
+        return loadMeta().then(function(meta) {
+            if (!meta || !meta.items) return [];
+            var jobs = meta.items.map(function(item) {
+                return decryptItem(key, item).then(function(j) {
+                    if (j !== null) { j.permalink = item.p; }
+                    return j;
+                });
+            });
+            return Promise.all(jobs).then(function(list) {
+                return list.filter(function(x) { return x !== null; });
+            });
+        });
+    }
+
+    return { unlock: unlock, sessionKey: sessionKey, items: items };
+})();
+</script>
+
 {{ if .IsHome }}
-<!-- ==================== 首页特效：轮播 / 打字机循环 ==================== -->
+<!-- ==================== 首页特效：轮播 / 打字机循环 / 音乐 / 隐藏区解锁 ==================== -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // 1. 背景轮播
@@ -122,6 +222,77 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
         setTimeout(tick, 600);
+    }
+
+    // 3. 背景音乐（跨页记忆播放状态）
+    var music = document.getElementById("bg-music"); var btn = document.getElementById("music-btn");
+    if (music && btn) {
+        music.volume = 0.4;
+        var wasPlaying = sessionStorage.getItem("musicPlaying") === "true";
+        var savedTime = sessionStorage.getItem("musicTime");
+        if (wasPlaying) {
+            if (savedTime) music.currentTime = parseFloat(savedTime);
+            music.play().then(() => { btn.innerHTML = "And so, we met."; }).catch(e => {});
+        }
+        music.addEventListener("play", function() { sessionStorage.setItem("musicPlaying", "true"); btn.innerHTML = "And so, we met."; });
+        music.addEventListener("pause", function() { sessionStorage.setItem("musicPlaying", "false"); btn.innerHTML = "What if God were a girl？"; });
+        setInterval(function() { if (!music.paused) sessionStorage.setItem("musicTime", music.currentTime); }, 1000);
+        btn.addEventListener("click", function() { if (music.paused) music.play(); else music.pause(); });
+    }
+
+    // 4. 隐藏区登录验证（加密验证：口令对 → 能解开加密索引；解开后显示隐藏文章）
+    function revealSecretCards(key) {
+        SecretVault.items(key).then(function(items) {
+            document.querySelectorAll(".secret-card").forEach(function(card) {
+                card.hidden = false;
+                var titleSlot = card.querySelector("[data-secret-title]");
+                if (titleSlot) {
+                    var permalink = titleSlot.getAttribute("data-secret-title");
+                    var found = null;
+                    items.forEach(function(it) { if (it.permalink === permalink) found = it; });
+                    if (found) {
+                        titleSlot.innerHTML = "";
+                        var a = document.createElement("a");
+                        a.href = found.permalink;
+                        a.textContent = found.title;
+                        titleSlot.appendChild(a);
+                    }
+                }
+            });
+        });
+    }
+
+    var loginBtn = document.getElementById("login-btn");
+    if (loginBtn) {
+        var msg = document.getElementById("login-msg");
+        SecretVault.sessionKey().then(function(key) {
+            if (key) {
+                if (msg) { msg.style.color = "#2ed573"; msg.innerText = "已验证，隐藏文章已显示。"; msg.style.display = "block"; }
+                revealSecretCards(key);
+            }
+        });
+        loginBtn.addEventListener("click", function() {
+            var userVal = document.getElementById("login-user").value;
+            var posVal = document.getElementById("login-pos").value;
+            var timeVal = document.getElementById("login-time").value;
+            var password = [userVal, posVal, timeVal].join(":");
+            SecretVault.unlock(password).then(function(key) {
+                if (key) {
+                    msg.style.color = "#2ed573";
+                    msg.innerText = "验证成功，隐藏文章已显示！";
+                    msg.style.display = "block";
+                    revealSecretCards(key);
+                } else {
+                    msg.style.color = "#ff4757";
+                    msg.innerText = "密码或口令错误";
+                    msg.style.display = "block";
+                }
+            }).catch(function() {
+                msg.style.color = "#ff4757";
+                msg.innerText = "验证失败，请重试";
+                msg.style.display = "block";
+            });
+        });
     }
 });
 </script>

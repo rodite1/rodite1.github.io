@@ -36,36 +36,13 @@
     if (!input || !list) return;
 
     var publicIndex = [];
-    var secretIndex = [];
-    var secretUnlocked = sessionStorage.getItem("secretUnlocked") === "yes";
-    var secretLoading = false;
-
-    // 已解锁：提示 + 恢复隐藏索引
-    if (secretUnlocked && loginMsg) {
-        loginMsg.style.color = "#2ed573";
-        loginMsg.innerText = "已验证，隐藏内容已加入搜索。";
-        loginMsg.style.display = "block";
-    }
+    var secretItems = [];
 
     function loadJSON(url) {
         return fetch(url, { cache: "no-store" })
             .then(function(r) { if (!r.ok) throw new Error(url + " " + r.status); return r.json(); })
             .catch(function() { return []; });
     }
-
-    function loadSecret() {
-        if (secretLoading) return;
-        secretLoading = true;
-        loadJSON("../secret.json").then(function(data) {
-            secretIndex = Array.isArray(data) ? data : [];
-            doSearch();
-        }).finally(function() { secretLoading = false; });
-    }
-
-    loadJSON("../index.json").then(function(data) {
-        publicIndex = Array.isArray(data) ? data : [];
-    });
-    if (secretUnlocked) loadSecret();
 
     function escapeHtml(s) {
         var div = document.createElement("div");
@@ -88,7 +65,7 @@
         if (!query) return;
 
         var qLower = query.toLowerCase();
-        var pool = secretUnlocked ? publicIndex.concat(secretIndex) : publicIndex;
+        var pool = publicIndex.concat(secretItems);
         var results = pool.filter(function(item) {
             var hay = [item.title, item.contents || "", (item.tags || []).join(" "), (item.categories || []).join(" ")].join(" ").toLowerCase();
             return hay.indexOf(qLower) !== -1;
@@ -103,7 +80,7 @@
         }
 
         results.forEach(function(item) {
-            var isSecret = secretIndex.indexOf(item) !== -1;
+            var isSecret = secretItems.indexOf(item) !== -1;
 
             var li = document.createElement("li");
 
@@ -141,28 +118,58 @@
         timer = setTimeout(doSearch, 150);
     });
 
-    // 隐藏区域权限验证
+    // 已解锁提示 + 恢复隐藏索引（SecretVault 定义在页面底部，需等 DOMContentLoaded）
+    function markUnlocked(msgText) {
+        if (loginMsg) {
+            loginMsg.style.color = "#2ed573";
+            loginMsg.innerText = msgText;
+            loginMsg.style.display = "block";
+        }
+    }
+    function loadSecretItems(key) {
+        return SecretVault.items(key).then(function(items) {
+            secretItems = items;
+            doSearch();
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        SecretVault.sessionKey().then(function(key) {
+            if (key) {
+                markUnlocked("已验证，隐藏内容已加入搜索。");
+                loadSecretItems(key);
+            }
+        });
+    });
+
+    // 隐藏区域权限验证：口令正确 → 能解开加密索引（GCM 校验）
     var loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
         loginBtn.addEventListener("click", function() {
             var userVal = document.getElementById("login-user").value;
             var posVal = document.getElementById("login-pos").value;
             var timeVal = document.getElementById("login-time").value;
+            var password = [userVal, posVal, timeVal].join(":");
 
-            if (userVal === "FQY" && posVal === "HYSX" && timeVal === "2018") {
-                sessionStorage.setItem("secretUnlocked", "yes");
-                secretUnlocked = true;
-                loadSecret();
-                loginMsg.style.color = "#2ed573";
-                loginMsg.innerText = "验证成功，隐藏内容已加入搜索！";
-                loginMsg.style.display = "block";
-            } else {
+            SecretVault.unlock(password).then(function(key) {
+                if (key) {
+                    markUnlocked("验证成功，隐藏内容已加入搜索！");
+                    loadSecretItems(key);
+                } else {
+                    loginMsg.style.color = "#ff4757";
+                    loginMsg.innerText = "密码或口令错误";
+                    loginMsg.style.display = "block";
+                }
+            }).catch(function() {
                 loginMsg.style.color = "#ff4757";
-                loginMsg.innerText = "密码或口令错误";
+                loginMsg.innerText = "验证失败，请重试";
                 loginMsg.style.display = "block";
-            }
+            });
         });
     }
+
+    loadJSON("../index.json").then(function(data) {
+        publicIndex = Array.isArray(data) ? data : [];
+    });
 })();
 </script>
 

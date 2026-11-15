@@ -10,6 +10,10 @@
         <img src="{{ $cover | absURL }}" alt="" loading="lazy">
     </a>
     <div class="home-card-body">
+        {{- if $isSecret }}
+        {{- /* 隐藏文章：不输出标题/摘要/日期明文，解锁后由前端解密填入 */}}
+        <h2 class="home-card-title" data-secret-title="{{ $page.Permalink }}">🔒 隐藏文章</h2>
+        {{- else }}
         <h2 class="home-card-title">
             <a href="{{ $page.Permalink }}">{{ $page.Title }}</a>
         </h2>
@@ -21,6 +25,7 @@
         </div>
         {{- with $page.Summary | plainify | htmlUnescape }}
         <p class="home-card-summary">{{ . | truncate 100 }}</p>
+        {{- end }}
         {{- end }}
     </div>
 </article>

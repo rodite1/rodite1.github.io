@@ -641,6 +641,27 @@ body.list:not(:has(#home-slider)) .main { max-width: 100% !important; }
 .post-single a, .post-single button, .post-single .like-btn { cursor: pointer; }
 
 /* ============================================================
+   隐藏文章锁定页（secret/single）
+   ============================================================ */
+.secret-locked {
+    margin-top: 20px;
+}
+.secret-hint {
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    margin: 0 0 16px;
+    line-height: 1.7;
+}
+
+/* secret 区块列表页提示 */
+.secret-section-hint {
+    color: var(--text-tertiary);
+    line-height: 2;
+}
+.secret-section-hint a { color: var(--text-secondary); }
+.secret-section-hint a:hover { color: #fff; }
+
+/* ============================================================
    搜索页：隐藏区域解锁 + 搜索结果条目
    ============================================================ */
 .search-lock {
