@@ -16,15 +16,61 @@
     /* 搜索页美化 */
     .search-input { background: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; border-radius: 12px !important; color: #fff !important; padding: 15px 20px !important; font-size: 16px !important; width: 100% !important; outline: none !important; }
 
-    /* ==================== 首页双栏布局 CSS ==================== */
-    .home-content-wrapper { display: flex !important; justify-content: center !important; gap: 30px !important; max-width: 1200px !important; margin: 0 auto !important; padding: 40px 20px !important; align-items: flex-start !important; }
-    .main-list-col { flex: 1 !important; min-width: 0 !important; }
-    .sidebar-col { width: 320px !important; flex-shrink: 0 !important; }
-
-    .sidebar-card {
-        background: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important;
-        border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 20px !important; color: #ccc !important; margin-bottom: 20px !important;
+    /* ==================== 首页专属 CSS Grid 布局 ==================== */
+    .main { 
+        display: grid !important; 
+        grid-template-columns: 1fr 320px !important; 
+        gap: 30px !important; 
+        max-width: 1200px !important; 
+        margin: 0 auto !important; 
+        align-items: flex-start !important; 
+        padding: 0 20px 40px 20px !important;
     }
+    
+    /* 第一屏占满全屏，跨越所有列 */
+    .home-info { 
+        grid-column: 1 / -1 !important; 
+        height: 100vh !important; 
+        display: flex !important; 
+        flex-direction: column !important; 
+        justify-content: center !important; 
+        align-items: center !important; 
+        margin: 0 !important; 
+        width: 100% !important;
+        text-align: center !important;
+    }
+    .home-info .entry-header h1 { font-size: 4rem !important; text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important; margin-bottom: 10px !important; font-weight: 700; color: #fff; }
+    .home-info .entry-content { font-size: 1.5rem !important; text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important; color: #ccc; }
+
+    /* 原生的文章，全部挤到左边（第一列） */
+    .main > .post-entry { 
+        grid-column: 1 !important; 
+        width: 100% !important; 
+        margin-bottom: 20px !important; 
+        background-color: rgba(30, 30, 30, 0.6) !important; 
+        backdrop-filter: blur(10px) !important; 
+        border-radius: 12px !important; 
+        border: 1px solid rgba(255,255,255,0.1) !important; 
+        padding: 20px !important; 
+    }
+
+    /* 我们自定义的侧边栏，钉死在右边（第二列），跨越无数行 */
+    .custom-sidebar { 
+        grid-column: 2 !important; 
+        grid-row: 2 / span 99 !important; /* 从第二行开始往下延伸 */
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        width: 100% !important;
+    }
+
+    /* 手机端适配 */
+    @media (max-width: 768px) {
+        .main { grid-template-columns: 1fr !important; }
+        .custom-sidebar { grid-column: 1 !important; grid-row: auto !important; margin-top: 30px !important; }
+    }
+
+    .sidebar-card { background: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; -webkit-backdrop-filter: blur(10px) !important; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 20px !important; color: #ccc !important; }
     .profile-card { text-align: center; }
     .profile-card img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid rgba(255,255,255,0.2); }
     .profile-card h3 { margin: 0 0 5px 0; color: #fff; font-size: 1.2rem; }
@@ -36,21 +82,10 @@
     .social-links a { color: #aaa; transition: color 0.3s; }
     .social-links a:hover { color: #fff; }
 
-    @media (max-width: 768px) {
-        .home-content-wrapper { flex-direction: column !important; }
-        .sidebar-col { width: 100% !important; }
-    }
-
-    .post-entry { background-color: rgba(30, 30, 30, 0.6) !important; backdrop-filter: blur(10px) !important; border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important; margin-bottom: 20px !important; padding: 20px !important; }
-    
     .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; z-index: 10; }
     @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); } 40% { transform: translate(-50%, -15px); } 60% { transform: translate(-50%, -7px); } }
 
-    /* 登录框输入框样式 */
-    .login-input {
-        background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; width: 100%; box-sizing: border-box; transition: 0.3s;
-    }
+    .login-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 14px; outline: none; width: 100%; box-sizing: border-box; transition: 0.3s; }
     .login-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.5); }
 </style>
 
@@ -79,27 +114,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <!-- ==================== 首页专属特效 ==================== -->
 {{ if .IsHome }}
 <style>
-    /* 清理背景 */
     html, body, .main, .list, #content, #wrapper, main { background-color: transparent !important; background-image: none !important; box-shadow: none !important; }
     #home-slider { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -999 !important; pointer-events: none; }
     .slide { position: absolute; width: 100%; height: 100%; background-size: cover !important; background-position: center !important; opacity: 0; transition: opacity 2s ease-in-out; }
     .slide.active { opacity: 1 !important; }
     body::before { content: "" !important; position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5) !important; z-index: -998 !important; pointer-events: none; }
-    
-    /* 强行让原生首页大标题占满全屏，并垂直居中 */
-    .home-info {
-        height: 100vh !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-        align-items: center !important;
-        margin-top: 0 !important;
-        position: relative !important;
-        width: 100% !important;
-        text-align: center !important;
-    }
-    .home-info .entry-header h1 { font-size: 4rem !important; text-shadow: 2px 2px 8px rgba(0,0,0,0.8) !important; margin-bottom: 10px !important; font-weight: 700; color: #fff; }
-    .home-info .entry-content { font-size: 1.5rem !important; text-shadow: 1px 1px 5px rgba(0,0,0,0.8) !important; color: #ccc; }
 </style>
 
 <div id="home-slider">
@@ -120,9 +139,8 @@ document.addEventListener("DOMContentLoaded", function() {
     What if God were a girl？
 </button>
 
-<!-- 侧边栏数据 (含登录框) -->
+<!-- 侧边栏 -->
 <div class="custom-sidebar" id="global-sidebar" style="display: none;">
-    <!-- 个人信息 -->
     <div class="sidebar-card profile-card">
         <img src="/avatar.jpg" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'">
         <h3>Rodite</h3>
@@ -138,13 +156,10 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     </div>
 
-    <!-- 公告 -->
     <div class="sidebar-card"><h4 style="margin-top:0; color:#fff;">📢 公告</h4><p style="font-size:0.9rem; margin-bottom:0;">(｡･ω･｡)ﾉ♡</p></div>
     
-    <!-- 标签 -->
     <div class="sidebar-card"><h4 style="margin-top:0; color:#fff;">🏷️ 标签</h4><div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"><a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">日常分享</a><a href="/tags/" style="font-size:0.85rem; background:rgba(255,255,255,0.1); padding:3px 10px; border-radius:12px; color:#aaa; text-decoration:none;">随笔</a></div></div>
 
-    <!-- 隐藏文章登录框 -->
     <div class="sidebar-card">
         <h4 style="margin-top:0; color:#fff;">🔒 隐藏区域解锁</h4>
         <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
@@ -184,48 +199,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }, 500);
 
-    // 3. 核心布局魔法：最安全的挂载方式
+    // 3. 处理侧边栏与隐藏文章
     var mainContainer = document.querySelector('.main');
-    var homeInfo = document.querySelector('.home-info');
+    var sidebar = document.getElementById('global-sidebar');
     
-    if (mainContainer && homeInfo) {
-        var posts = document.querySelectorAll('.main .post-entry');
-        var sidebar = document.getElementById('global-sidebar');
-
-        if (posts.length > 0) {
-            var wrapper = document.createElement('div');
-            wrapper.className = 'home-content-wrapper';
-            
-            var leftCol = document.createElement('div');
-            leftCol.className = 'main-list-col';
-            
-            var rightCol = document.createElement('div');
-            rightCol.className = 'sidebar-col';
-
-            // 迁移文章并判断隐藏
-            posts.forEach(function(post) {
-                if (post.getAttribute('href') && post.getAttribute('href').includes('/secret/')) {
-                    post.style.display = 'none';
-                    post.classList.add('secret-article');
-                }
-                leftCol.appendChild(post);
-            });
-
-            // 迁移侧边栏
-            if (sidebar) {
-                sidebar.style.display = 'flex';
-                sidebar.style.flexDirection = 'column';
-                rightCol.appendChild(sidebar);
+    if (mainContainer && sidebar) {
+        // 隐藏包含 secret 的文章
+        document.querySelectorAll('.main > .post-entry').forEach(function(post) {
+            if (post.getAttribute('href') && post.getAttribute('href').includes('/secret/')) {
+                post.style.display = 'none';
+                post.classList.add('secret-article');
             }
+        });
 
-            wrapper.appendChild(leftCol);
-            wrapper.appendChild(rightCol);
+        // 直接显示侧边栏并追加到 main 里（依靠 CSS Grid 自动排到右边）
+        sidebar.style.display = 'flex';
+        mainContainer.appendChild(sidebar);
 
-            // 把 wrapper 加在 homeInfo 正下方（只要不加进 homeInfo 内部，就不会被 flex 挤跑）
-            mainContainer.appendChild(wrapper);
-        }
-
-        // ===== 4. 登录验证逻辑 =====
+        // 4. 登录验证逻辑
         var loginBtn = document.getElementById('login-btn');
         if (loginBtn) {
             loginBtn.addEventListener('click', function() {
