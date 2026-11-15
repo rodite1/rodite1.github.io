@@ -1,0 +1,26 @@
+{{- $page := .Page }}
+{{- $isSecret := eq $page.Section "secret" }}
+<article class="home-card{{ if $isSecret }} secret-card{{ end }}"{{ if $isSecret }} data-secret hidden{{ end }}>
+    <a class="home-card-cover" href="{{ $page.Permalink }}" aria-label="封面" tabindex="-1">
+        {{- $cover := $page.Params.cover }}
+        {{- if not $cover }}
+            {{- $covers := site.Params.defaultCovers | default (slice "/bg1.jpg") }}
+            {{- $cover = index $covers (mod .Index (len $covers)) }}
+        {{- end }}
+        <img src="{{ $cover | absURL }}" alt="" loading="lazy">
+    </a>
+    <div class="home-card-body">
+        <h2 class="home-card-title">
+            <a href="{{ $page.Permalink }}">{{ $page.Title }}</a>
+        </h2>
+        <div class="home-card-meta">
+            <span class="home-card-date">发表于 {{ $page.Date | time.Format "2006-01-02" }}</span>
+            {{- range first 1 ($page.GetTerms "categories") }}
+            <a class="home-card-cat" href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+            {{- end }}
+        </div>
+        {{- with $page.Summary | plainify | htmlUnescape }}
+        <p class="home-card-summary">{{ . | truncate 100 }}</p>
+        {{- end }}
+    </div>
+</article>

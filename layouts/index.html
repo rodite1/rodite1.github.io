@@ -1,0 +1,43 @@
+{{- define "main" }}
+{{- $mainSections := site.Params.mainSections | default (slice "posts") }}
+{{- $pages := where site.RegularPages "Type" "in" $mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+{{- $paginator := .Paginate $pages }}
+
+{{- /* ===== 首屏 hero（轮播背景 + 头像 + 标题 + 打字机 + 统计） ===== */}}
+{{- partial "home/hero.html" . }}
+
+{{- /* ===== 双栏：文章卡片列表 + 侧边栏 ===== */}}
+<div class="home-layout">
+    <div class="home-main">
+        <div class="home-cards">
+            {{- range $index, $page := $paginator.Pages }}
+            {{- partial "home/post-card.html" (dict "Page" $page "Index" $index) }}
+            {{- end }}
+        </div>
+
+        {{- if gt $paginator.TotalPages 1 }}
+        <footer class="page-footer">
+            <nav class="pagination">
+                {{- if $paginator.HasPrev }}
+                <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">
+                    «&nbsp;上一页
+                    {{- if (.Param "ShowPageNums") }}&nbsp;{{ sub $paginator.PageNumber 1 }}/{{ $paginator.TotalPages }}{{ end }}
+                </a>
+                {{- end }}
+                {{- if $paginator.HasNext }}
+                <a class="next" href="{{ $paginator.Next.URL | absURL }}">
+                    下一页
+                    {{- if (.Param "ShowPageNums") }}&nbsp;{{ add 1 $paginator.PageNumber }}/{{ $paginator.TotalPages }}{{ end }}&nbsp;»
+                </a>
+                {{- end }}
+            </nav>
+        </footer>
+        {{- end }}
+    </div>
+
+    <aside class="home-sidebar">
+        {{- partial "home/sidebar.html" . }}
+    </aside>
+</div>
+{{- end }}

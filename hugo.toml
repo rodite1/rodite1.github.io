@@ -8,6 +8,24 @@ theme = "PaperMod"
   ShowSearch = true
   ShowCodeCopyButtons = true
   mainSections = ["posts", "secret"]
+  DateFormat = "2006-01-02"     # 统一中文习惯的日期格式
+
+  # ====== 首页 hero 与侧边栏文案 ======
+  heroSubtitle = "What if God were a girl？"   # 打字机副标题
+  startDate = "2026-09-29"                      # 网站运行天数从这一天起算
+  # 文章未设置封面时，按顺序轮流使用以下图片作为卡片封面
+  defaultCovers = ["/bg1.jpg", "/bg2.jpg", "/bg3.jpg", "/bg4.jpg", "/bg5.jpg"]
+
+  [params.profile]
+    name = "Rodite"
+    avatar = "/avatar.jpg"
+    bio = "星星眨眼本就不可思议<br>请别责怪它不为你指路"
+    followMeText = "Follow Me"
+    followMeUrl = "https://github.com/rodite1"
+
+  [params.sidebar]
+    announcement = "(｡･ω･｡)ﾉ♡"
+
   # ====== 社交图标（添加邮箱和 GitHub） ======
   [[params.socialIcons]]
     name = "github"

@@ -1,0 +1,123 @@
+{{- $mainSections := site.Params.mainSections | default (slice "posts") }}
+{{- $posts := where site.RegularPages "Type" "in" $mainSections }}
+{{- $public := where $posts "Section" "!=" "secret" }}
+{{- $latest := first 5 $public.ByDate.Reverse }}
+
+{{- /* ===== 个人资料 ===== */}}
+<div class="widget-card widget-profile">
+    {{- with site.Params.profile.avatar }}
+    <img class="widget-avatar" src="{{ . | absURL }}" alt="avatar"
+        onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'">
+    {{- end }}
+    <h3 class="widget-name">{{ site.Params.profile.name | default site.Title }}</h3>
+    {{- with site.Params.profile.bio }}
+    <div class="widget-bio">{{ . | safeHTML }}</div>
+    {{- end }}
+    <div class="widget-profile-stats">
+        <div class="wps-item"><span class="wps-num">{{ len $public }}</span><span class="wps-label">文章</span></div>
+        <div class="wps-item"><span class="wps-num">{{ len site.Taxonomies.tags }}</span><span class="wps-label">标签</span></div>
+        <div class="wps-item"><span class="wps-num">{{ len site.Taxonomies.categories }}</span><span class="wps-label">分类</span></div>
+    </div>
+    {{- with site.Params.profile.followMeUrl }}
+    <a class="widget-follow" href="{{ . }}" target="_blank" rel="noopener">{{ site.Params.profile.followMeText | default "Follow Me" }}</a>
+    {{- end }}
+    <div class="widget-social">
+        {{ partial "social_icons.html" (dict "align" "center") }}
+    </div>
+</div>
+
+{{- /* ===== 公告 ===== */}}
+<div class="widget-card">
+    <div class="widget-header"><span class="widget-icon">📢</span><h4>公告</h4></div>
+    <p class="widget-announce">{{ site.Params.sidebar.announcement | default "(｡･ω･｡)ﾉ♡" }}</p>
+</div>
+
+{{- /* ===== 最新文章 ===== */}}
+<div class="widget-card">
+    <div class="widget-header"><span class="widget-icon">📝</span><h4>最新文章</h4></div>
+    <div class="widget-latest">
+        {{- range $latest }}
+        <a class="widget-latest-item" href="{{ .Permalink }}">
+            <span class="widget-latest-title">{{ .Title }}</span>
+            <span class="widget-latest-date">{{ .Date | time.Format "2006-01-02" }}</span>
+        </a>
+        {{- else }}
+        <p class="widget-empty">暂无文章</p>
+        {{- end }}
+    </div>
+</div>
+
+{{- /* ===== 分类 ===== */}}
+<div class="widget-card">
+    <div class="widget-header"><span class="widget-icon">📁</span><h4>分类</h4></div>
+    <div class="widget-cats">
+        {{- range $name, $tax := site.Taxonomies.categories }}
+        {{- with site.GetPage (printf "categories/%s" $name) }}
+        <a class="widget-cat-item" href="{{ .Permalink }}">
+            <span class="widget-cat-name">{{ .LinkTitle }}</span>
+            <span class="widget-cat-count">{{ len $tax }}</span>
+        </a>
+        {{- end }}
+        {{- else }}
+        <p class="widget-empty">暂无分类</p>
+        {{- end }}
+    </div>
+</div>
+
+{{- /* ===== 标签 ===== */}}
+<div class="widget-card">
+    <div class="widget-header"><span class="widget-icon">🏷️</span><h4>标签</h4></div>
+    <div class="widget-tags">
+        {{- range $name, $tax := site.Taxonomies.tags }}
+        {{- with site.GetPage (printf "tags/%s" $name) }}
+        <a class="widget-tag" href="{{ .Permalink }}">{{ .LinkTitle }}<span class="widget-tag-count">{{ len $tax }}</span></a>
+        {{- end }}
+        {{- else }}
+        <p class="widget-empty">暂无标签</p>
+        {{- end }}
+    </div>
+</div>
+
+{{- /* ===== 归档 ===== */}}
+<div class="widget-card">
+    <div class="widget-header"><span class="widget-icon">🗂️</span><h4>归档</h4></div>
+    <div class="widget-cats">
+        {{- range $public.GroupByDate "2006" }}
+        <a class="widget-cat-item" href="{{ "/archives/" | absLangURL }}">
+            <span class="widget-cat-name">{{ .Key }} 年</span>
+            <span class="widget-cat-count">{{ len .Pages }}</span>
+        </a>
+        {{- else }}
+        <p class="widget-empty">暂无归档</p>
+        {{- end }}
+    </div>
+</div>
+
+{{- /* ===== 网站信息 ===== */}}
+{{- $words := 0 }}
+{{- range $public }}{{ $words = add $words .WordCount }}{{ end }}
+{{- $runDays := 0 }}
+{{- with site.Params.startDate }}{{ $runDays = div (sub now.Unix (time.AsTime .).Unix) 86400 }}{{ end }}
+<div class="widget-card">
+    <div class="widget-header"><span class="widget-icon">ℹ️</span><h4>网站信息</h4></div>
+    <div class="widget-info">
+        <div class="widget-info-row"><span>文章数目</span><span>{{ len $public }}</span></div>
+        <div class="widget-info-row"><span>运行时间</span><span>{{ $runDays }} 天</span></div>
+        <div class="widget-info-row"><span>本站总字数</span><span>{{ $words }}</span></div>
+        {{- range first 1 $latest }}
+        <div class="widget-info-row"><span>最后更新</span><a href="{{ .Permalink }}">{{ .Date | time.Format "2006-01-02" }}</a></div>
+        {{- end }}
+    </div>
+</div>
+
+{{- /* ===== 隐藏区域解锁 ===== */}}
+<div class="widget-card widget-lock">
+    <div class="widget-header"><span class="widget-icon">🔒</span><h4>隐藏区域解锁</h4></div>
+    <div class="widget-lock-form">
+        <input type="text" id="login-user" class="login-input" placeholder="用户 (User)">
+        <input type="text" id="login-pos" class="login-input" placeholder="坐标 (Location)">
+        <input type="text" id="login-time" class="login-input" placeholder="时间 (Time)">
+        <button id="login-btn" class="login-btn" type="button">验证解锁</button>
+        <div id="login-msg" class="login-msg" style="display:none;"></div>
+    </div>
+</div>
