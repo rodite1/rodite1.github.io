@@ -7,8 +7,8 @@
 {{- end }}
 {{- end }}
 
-{{- /* Waline 评论样式（仅文章页且已配置 serverURL 时加载） */}}
+{{- /* Waline 评论样式（仅文章页且已配置 serverURL 时加载；走国内 npm 镜像加速） */}}
 {{- $waline := site.Params.waline }}
 {{- if and .IsPage $waline (ne (strings.TrimSpace $waline.serverURL) "") }}
-<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css">
+<link rel="stylesheet" href="https://registry.npmmirror.com/@waline/client/3.16.2/files/dist/waline.css">
 {{- end }}

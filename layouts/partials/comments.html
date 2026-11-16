@@ -5,7 +5,7 @@
     {{- if and $waline (ne (strings.TrimSpace $waline.serverURL) "") }}
     <div id="waline"></div>
     <script type="module">
-        import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+        import { init } from 'https://registry.npmmirror.com/@waline/client/3.16.2/files/dist/waline.js';
         init({
             el: '#waline',
             serverURL: {{ $waline.serverURL | jsonify | safeJS }},
@@ -13,8 +13,10 @@
             lang: {{ $waline.lang | default "zh-CN" | jsonify | safeJS }},
             locale: { reactionTitle: 'The end' },
             dark: 'html[data-theme="dark"]',
-            {{- /* 文章反应条：只保留红心（点赞） */}}
-            reaction: {{ if (default true $waline.reaction) }}['//unpkg.com/@waline/emojis@1.1.0/bmoji/bmoji_love.png']{{ else }}false{{ end }},
+            {{- /* 文章反应条：只保留红心（点赞）；表情走国内镜像 */}}
+            reaction: {{ if (default true $waline.reaction) }}['https://registry.npmmirror.com/@waline/emojis/1.1.0/files/bmoji/bmoji_love.png']{{ else }}false{{ end }},
+            emoji: ['https://registry.npmmirror.com/@waline/emojis/1.1.0/files/weibo'],
+            search: false,
             pageview: {{ default true $waline.pageview | jsonify | safeJS }},
             comment: {{ default true $waline.comment | jsonify | safeJS }},
             login: 'enable',
