@@ -11,9 +11,10 @@
             serverURL: {{ $waline.serverURL | jsonify | safeJS }},
             path: window.location.pathname,
             lang: {{ $waline.lang | default "zh-CN" | jsonify | safeJS }},
+            locale: { reactionTitle: 'The end' },
             dark: 'html[data-theme="dark"]',
-            {{- /* 文章反应条：赞 + 爱心（自定义表情） */}}
-            reaction: {{ if (default true $waline.reaction) }}['//unpkg.com/@waline/emojis@1.1.0/bmoji/bmoji_thumb_up.png', '//unpkg.com/@waline/emojis@1.1.0/bmoji/bmoji_love.png']{{ else }}false{{ end }},
+            {{- /* 文章反应条：只保留红心（点赞） */}}
+            reaction: {{ if (default true $waline.reaction) }}['//unpkg.com/@waline/emojis@1.1.0/bmoji/bmoji_love.png']{{ else }}false{{ end }},
             pageview: {{ default true $waline.pageview | jsonify | safeJS }},
             comment: {{ default true $waline.comment | jsonify | safeJS }},
             login: 'enable',

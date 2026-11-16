@@ -650,6 +650,33 @@ html[data-theme="light"] .post-comments {
     font-size: 0.9rem;
     margin: 0;
 }
+
+/* 文章反应条（点赞红心）数字强化：让 +1 清晰可见 */
+.post-comments .wl-reaction-img {
+    width: 48px;
+    height: 48px;
+}
+.post-comments .wl-reaction-votes {
+    inset-inline-end: -15px;
+    top: -15px;
+    min-width: 1.7em;
+    padding: 3px 7px;
+    border: 1.5px solid #ff7eb9;
+    border-radius: 1.2em;
+    background: var(--waline-bg-color);
+    color: #ff7eb9;
+    font-weight: 700;
+    font-size: 0.95em;
+    line-height: 1;
+}
+.post-comments .wl-reaction-item.active .wl-reaction-votes {
+    background: #ff7eb9;
+    color: #ffffff;
+}
+.post-comments .wl-reaction-item:hover img,
+.post-comments .wl-reaction-item.active img {
+    transform: none;
+}
 /* 评论区在文章页内不重复爱心光标（让位给 Waline 自己的交互光标） */
 .post-single .post-comments,
 .post-single .post-comments * {
