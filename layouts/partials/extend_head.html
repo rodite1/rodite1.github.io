@@ -1,0 +1,14 @@
+{{- /* GoatCounter：全站流量明细统计（后台可看访问 IP / 主机 UA / 时间 / 路径） */}}
+{{- with site.Params.goatcounter }}
+{{- with .code }}
+{{- if ne (strings.TrimSpace .) "" }}
+<script data-goatcounter="https://{{ . }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- /* Waline 评论样式（仅文章页且已配置 serverURL 时加载） */}}
+{{- $waline := site.Params.waline }}
+{{- if and .IsPage $waline (ne (strings.TrimSpace $waline.serverURL) "") }}
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css">
+{{- end }}

@@ -27,6 +27,13 @@
       {{- partial "post_canonical.html" . -}}
     </div>
     {{- end }}
+    {{- $waline := site.Params.waline }}
+    {{- if and $waline (ne (strings.TrimSpace $waline.serverURL) "") }}
+    <div class="post-meta-stats">
+        <span class="stats-item">👁️ 浏览：<span class="waline-pageview-count" data-path="{{ .RelPermalink }}"></span></span>
+        <span class="stats-item">💬 评论：<span class="waline-comment-count" data-path="{{ .RelPermalink }}"></span></span>
+    </div>
+    {{- end }}
   </header>
   {{- /* 文章页不显示封面图（需求：文章界面不要加图片） */}}
   {{- if (.Param "ShowToc") }}
@@ -58,7 +65,8 @@
     {{- end }}
   </footer>
 
-  {{- if (.Param "comments") }}
+  {{- /* 评论区（浏览完文章后的最下面；单篇可用 front matter `comments = false` 关闭） */}}
+  {{- if ne (.Param "comments") false }}
   {{- partial "comments.html" . }}
   {{- end }}
 </article>

@@ -602,15 +602,63 @@ body.list:not(:has(#home-slider)) .main { max-width: 100% !important; }
     font-size: 14px;
     color: #a3a3a3;
 }
-.like-btn {
-    cursor: pointer;
-    display: flex;
+.stats-item {
+    display: inline-flex;
     align-items: center;
     gap: 5px;
-    transition: transform 0.2s, color 0.2s;
 }
-.like-btn:hover { color: var(--danger); transform: scale(1.1); }
-.like-btn.liked { color: var(--danger); }
+
+/* ============================================================
+   评论区（Waline）：浏览完文章后的最下面，毛玻璃卡片
+   ============================================================ */
+.post-comments {
+    margin-top: 30px;
+    padding: 24px 26px;
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    /* Waline 配色融入本站暗色玻璃风格 */
+    --waline-bg-color: transparent;
+    --waline-bg-color-light: rgba(255, 255, 255, 0.06);
+    --waline-bg-color-hover: rgba(255, 255, 255, 0.1);
+    --waline-color: #cccccc;
+    --waline-border-color: rgba(255, 255, 255, 0.15);
+    --waline-white: #ffffff;
+    --waline-theme-color: #8ca2d8;
+    --waline-active-color: #a9bbef;
+    --waline-avatar-radius: 50%;
+}
+html[data-theme="light"] .post-comments {
+    --waline-bg-color: rgba(255, 255, 255, 0.85);
+    --waline-bg-color-light: rgba(0, 0, 0, 0.03);
+    --waline-bg-color-hover: rgba(0, 0, 0, 0.05);
+    --waline-color: #444444;
+    --waline-border-color: #dddddd;
+    --waline-white: #000000;
+}
+.post-comments .comments-title {
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 16px;
+    letter-spacing: 1px;
+}
+.post-comments .comments-placeholder {
+    color: var(--text-quaternary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+/* 评论区在文章页内不重复爱心光标（让位给 Waline 自己的交互光标） */
+.post-single .post-comments,
+.post-single .post-comments * {
+    cursor: auto;
+}
+.post-single .post-comments a,
+.post-single .post-comments button {
+    cursor: pointer;
+}
 
 /* 回到顶部按钮 */
 .top-link {

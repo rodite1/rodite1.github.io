@@ -1,0 +1,30 @@
+{{- /* 评论区：Waline（评论 + 回复 + 评论点赞 + 文章反应 + 浏览量/评论数统计） */}}
+{{- $waline := site.Params.waline }}
+<section class="post-comments">
+    <h2 class="comments-title">评论</h2>
+    {{- if and $waline (ne (strings.TrimSpace $waline.serverURL) "") }}
+    <div id="waline"></div>
+    <script type="module">
+        import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+        init({
+            el: '#waline',
+            serverURL: {{ $waline.serverURL | jsonify | safeJS }},
+            path: window.location.pathname,
+            lang: {{ $waline.lang | default "zh-CN" | jsonify | safeJS }},
+            dark: 'html[data-theme="dark"]',
+            {{- /* 文章反应条：赞 + 爱心（自定义表情） */}}
+            reaction: {{ if (default true $waline.reaction) }}['//unpkg.com/@waline/emojis@1.1.0/bmoji/bmoji_thumb_up.png', '//unpkg.com/@waline/emojis@1.1.0/bmoji/bmoji_love.png']{{ else }}false{{ end }},
+            pageview: {{ default true $waline.pageview | jsonify | safeJS }},
+            comment: {{ default true $waline.comment | jsonify | safeJS }},
+            login: 'enable',
+            commentSorting: 'latest',
+            pageSize: 10,
+            wordLimit: 1000,
+        });
+    </script>
+    {{- else }}
+    <p class="comments-placeholder">
+        评论区尚未配置。站长完成 Waline 部署并在 hugo.toml 填入 serverURL 后，访客即可在此留言。
+    </p>
+    {{- end }}
+</section>

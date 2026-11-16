@@ -26,6 +26,18 @@ theme = "PaperMod"
   [params.sidebar]
     announcement = "(｡･ω･｡)ﾉ♡"
 
+  # ====== 评论 + 浏览量 + 文章点赞（Waline，需要部署服务端） ======
+  [params.waline]
+    serverURL = "https://myblog-waline-six.vercel.app" # <--- 已经填好了你的专属地址
+    lang = "zh-CN"
+    pageview = true     # 浏览量统计（文章页显示）
+    comment = true      # 评论数统计（文章页显示）
+    reaction = true     # 文章点赞反应条（评论区上方）
+
+  # ====== 全站流量明细统计（GoatCounter，注册即用，后台可看 IP/主机/时间） ======
+  [params.goatcounter]
+    code = "rodite"     # <--- 已经填好了你的站点代码
+
   # ====== 社交图标（添加邮箱和 GitHub） ======
   [[params.socialIcons]]
     name = "github"

@@ -298,30 +298,5 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 {{ end }}
 
-<!-- ==================== 文章点赞（文章页） ==================== -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var isPost = document.querySelector('.post-single');
-    if (!isPost) return;
-
-    var postHeader = document.querySelector('.post-header');
-    var pageKey = 'like_' + window.location.pathname;
-    var likeCount = localStorage.getItem(pageKey) || 0;
-    var statsHTML = `<div class="post-meta-stats">
-        <div class="busuanzi-page-pv">👁️ 浏览：<span id="busuanzi_value_page_pv">0</span> 次</div>
-        <div class="like-btn"><span>❤️</span> 点赞：<span class="like-count">${likeCount}</span></div>
-    </div>`;
-    if (postHeader) postHeader.insertAdjacentHTML('afterend', statsHTML);
-
-    var btns = document.querySelectorAll('.like-btn');
-    btns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var currentCount = parseInt(localStorage.getItem(pageKey) || 0) + 1;
-            localStorage.setItem(pageKey, currentCount);
-            document.querySelectorAll('.like-count').forEach(el => { el.innerText = currentCount; });
-            btns.forEach(b => b.classList.add('liked'));
-        });
-        if (parseInt(localStorage.getItem(pageKey) || 0) > 0) { btn.classList.add('liked'); }
-    });
-});
-</script>
+{{- /* 文章点赞与浏览量已改由 Waline 提供（文章底部反应条 + 文章头部浏览/评论计数）；
+     旧 localStorage 点赞方案已移除（数据只在访客本地，无法在后台统计） */}}
