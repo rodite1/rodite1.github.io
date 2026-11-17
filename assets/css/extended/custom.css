@@ -264,17 +264,17 @@ body.list:has(#home-slider)::before {
 }
 .home-card[hidden] { display: none !important; }
 
-/* 霜花层：细线冰晶从角落缓缓结晶生长（更静、更冷、更疏离） */
+/* 霜花层：细线冰晶爬满整张卡片，悬停时缓缓结晶生长（更静、更冷、更疏离） */
 .home-card::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 320'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.38)' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M52 320 L100 248'/%3E%3Cpath d='M60 302 L84 294'/%3E%3Cpath d='M68 284 L92 276'/%3E%3Cpath d='M76 266 L100 258'/%3E%3Cpath d='M84 248 L108 240'/%3E%3Cpath d='M58 296 L70 308'/%3E%3Cpath d='M66 278 L78 290'/%3E%3Cpath d='M74 260 L86 272'/%3E%3Cpath d='M552 20 L600 92'/%3E%3Cpath d='M560 28 L574 38'/%3E%3Cpath d='M568 40 L582 50'/%3E%3Cpath d='M576 54 L590 64'/%3E%3Cpath d='M556 22 L546 32'/%3E%3Cpath d='M564 34 L554 44'/%3E%3Cpath d='M574 46 L564 56'/%3E%3Cpath d='M580 70 L640 70 M580 10 L580 130 M537 27 L623 113 M537 113 L623 27'/%3E%3Cpath d='M616 70 L628 62 M616 70 L628 78'/%3E%3Cpath d='M580 94 L572 106 M580 94 L588 106'/%3E%3Cpath d='M592 82 L604 90 M592 82 L600 72'/%3E%3Cpath d='M64 40 L96 40 M80 24 L80 56 M69 29 L91 51 M69 51 L91 29'/%3E%3Cpath d='M600 320 L556 268'/%3E%3Cpath d='M592 306 L574 298'/%3E%3Cpath d='M584 290 L566 282'/%3E%3Cpath d='M576 274 L558 266'/%3E%3Cpath d='M594 302 L604 310'/%3E%3Cpath d='M586 286 L596 294'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 640px 320px;
-    background-position: left bottom;
-    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 300'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M70 20 L70 120'/%3E%3Cpath d='M70 34 L52 44 M70 46 L88 56 M70 58 L52 70 M70 70 L88 80 M70 82 L54 94 M70 94 L86 104'/%3E%3Cpath d='M240 150 L290 150 M265 125 L265 175 M247 132 L283 168 M247 168 L283 132'/%3E%3Cpath d='M265 125 L260 112 M265 125 L270 112'/%3E%3Cpath d='M290 150 L303 145 M290 150 L303 155'/%3E%3Cpath d='M283 168 L296 173 M283 168 L293 180'/%3E%3Cpath d='M160 210 L200 260'/%3E%3Cpath d='M166 218 L178 224 M172 226 L184 232 M178 236 L190 242'/%3E%3Cpath d='M164 216 L152 222 M170 224 L158 230'/%3E%3Cpath d='M40 240 L70 240 M55 225 L55 255 M44 229 L66 251 M44 251 L66 229'/%3E%3Cpath d='M300 40 L280 60 M296 34 L288 46'/%3E%3Cpath d='M200 300 L210 280 M206 296 L216 288'/%3E%3Cpath d='M130 60 L140 84 M136 56 L124 64'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 340px 300px;
+    background-position: 0 0;
+    background-repeat: repeat;
     opacity: 0;
     transform: scale(0.84);
     transform-origin: left bottom;
@@ -285,15 +285,15 @@ body.list:has(#home-slider)::before {
     transform: scale(1);
 }
 
-/* 冷雾层：悬停时边缘缓缓起一层极淡的冷雾 */
+/* 冷雾层：悬停时边缘缓缓起一层冷雾 */
 .home-card::after {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: radial-gradient(120% 100% at 15% 90%, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04) 45%, rgba(255, 255, 255, 0) 70%);
-    box-shadow: inset 0 0 46px rgba(255, 255, 255, 0.09);
+    background: radial-gradient(120% 100% at 15% 90%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0) 70%);
+    box-shadow: inset 0 0 46px rgba(255, 255, 255, 0.16);
     opacity: 0;
     transition: opacity 1.8s ease;
 }
