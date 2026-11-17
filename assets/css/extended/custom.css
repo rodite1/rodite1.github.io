@@ -242,61 +242,63 @@ body.list:has(#home-slider)::before {
 }
 
 /* ============================================================
-   文章卡片（仅标题，无封面图；悬停 = 冷白裂纹 + 碎裂轻颤）
+   文章卡片（仅标题，无封面图；悬停 = 表面缓缓结霜）
    ============================================================ */
 .home-card {
     display: block;
     position: relative;
     overflow: hidden;
     padding: 20px 26px;
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     animation: fadeUp 0.6s ease backwards;
-    transition: border-color var(--transition), box-shadow var(--transition);
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 .home-card:hover {
+    transform: translateY(-4px);
     border-color: var(--glass-border-hover);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-    animation: glassCrack 0.55s cubic-bezier(0.25, 0.8, 0.25, 1) both;
 }
 .home-card[hidden] { display: none !important; }
 
-/* 玻璃裂片层：悬停时卡片背景沿锯齿裂缝裂成左右两片，各自错位分离 */
-.home-card::before,
+/* 霜花层：细线冰晶从角落缓缓结晶生长（更静、更冷、更疏离） */
+.home-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 320'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.38)' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M52 320 L100 248'/%3E%3Cpath d='M60 302 L84 294'/%3E%3Cpath d='M68 284 L92 276'/%3E%3Cpath d='M76 266 L100 258'/%3E%3Cpath d='M84 248 L108 240'/%3E%3Cpath d='M58 296 L70 308'/%3E%3Cpath d='M66 278 L78 290'/%3E%3Cpath d='M74 260 L86 272'/%3E%3Cpath d='M552 20 L600 92'/%3E%3Cpath d='M560 28 L574 38'/%3E%3Cpath d='M568 40 L582 50'/%3E%3Cpath d='M576 54 L590 64'/%3E%3Cpath d='M556 22 L546 32'/%3E%3Cpath d='M564 34 L554 44'/%3E%3Cpath d='M574 46 L564 56'/%3E%3Cpath d='M580 70 L640 70 M580 10 L580 130 M537 27 L623 113 M537 113 L623 27'/%3E%3Cpath d='M616 70 L628 62 M616 70 L628 78'/%3E%3Cpath d='M580 94 L572 106 M580 94 L588 106'/%3E%3Cpath d='M592 82 L604 90 M592 82 L600 72'/%3E%3Cpath d='M64 40 L96 40 M80 24 L80 56 M69 29 L91 51 M69 51 L91 29'/%3E%3Cpath d='M600 320 L556 268'/%3E%3Cpath d='M592 306 L574 298'/%3E%3Cpath d='M584 290 L566 282'/%3E%3Cpath d='M576 274 L558 266'/%3E%3Cpath d='M594 302 L604 310'/%3E%3Cpath d='M586 286 L596 294'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 640px 320px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: scale(0.84);
+    transform-origin: left bottom;
+    transition: opacity 1.8s ease-out, transform 2.2s ease-out;
+}
+.home-card:hover::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* 冷雾层：悬停时边缘缓缓起一层极淡的冷雾 */
 .home-card::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background: rgba(30, 30, 30, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: inherit;
-    transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.home-card::before {
-    /* 左片：右侧锯齿裂缘 */
-    clip-path: polygon(0 0, 52% 0, 44% 14%, 55% 30%, 46% 47%, 56% 64%, 47% 81%, 53% 100%, 0 100%);
-}
-.home-card::after {
-    /* 右片：左侧锯齿裂缘（与左片互补） */
-    clip-path: polygon(100% 0, 52% 0, 44% 14%, 55% 30%, 46% 47%, 56% 64%, 47% 81%, 53% 100%, 100% 100%);
-}
-.home-card:hover::before {
-    transform: translate(-6px, 3px) rotate(-0.4deg);
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(120% 100% at 15% 90%, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04) 45%, rgba(255, 255, 255, 0) 70%);
+    box-shadow: inset 0 0 46px rgba(255, 255, 255, 0.09);
+    opacity: 0;
+    transition: opacity 1.8s ease;
 }
 .home-card:hover::after {
-    transform: translate(6px, -3px) rotate(0.4deg);
-}
-
-/* 碎裂轻颤：悬停瞬间卡片像被轻轻击中的玻璃，震颤着上浮后归于静止 */
-@keyframes glassCrack {
-    0% { transform: translateY(0) rotate(0deg); }
-    18% { transform: translateY(-2px) translateX(-1.5px) rotate(-0.5deg); }
-    40% { transform: translateY(-5px) translateX(1.8px) rotate(0.55deg); }
-    62% { transform: translateY(-3px) translateX(-0.8px) rotate(-0.2deg); }
-    82% { transform: translateY(-4.5px) translateX(0.4px) rotate(0.12deg); }
-    100% { transform: translateY(-4px) rotate(0deg); }
+    opacity: 1;
 }
 
 .home-card-cover { flex-shrink: 0; width: 200px; display: block; overflow: hidden; }
