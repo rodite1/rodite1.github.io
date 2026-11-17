@@ -249,9 +249,6 @@ body.list:has(#home-slider)::before {
     position: relative;
     overflow: hidden;
     padding: 20px 26px;
-    background: rgba(30, 30, 30, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     animation: fadeUp 0.6s ease backwards;
@@ -264,22 +261,32 @@ body.list:has(#home-slider)::before {
 }
 .home-card[hidden] { display: none !important; }
 
-/* 裂纹层：悬停时冷白细裂纹从卡片表面显现（疏离、清冷的破碎感） */
-.home-card::before {
+/* 玻璃裂片层：悬停时卡片背景沿锯齿裂缝裂成左右两片，各自错位分离 */
+.home-card::before,
+.home-card::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.30)' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M100 0 L97 28 L106 54 L98 82 L105 112 L94 142 L103 172 L96 204 L104 238 L97 268 L100 300'/%3E%3Cpath d='M97 28 L68 48'/%3E%3Cpath d='M106 54 L132 76'/%3E%3Cpath d='M98 82 L70 108'/%3E%3Cpath d='M105 112 L134 134'/%3E%3Cpath d='M94 142 L66 162'/%3E%3Cpath d='M103 172 L131 196'/%3E%3Cpath d='M96 204 L70 228'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / cover;
-    opacity: 0;
-    transform: scaleY(0.55) scaleX(1.02);
-    transform-origin: center;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: -1;
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: inherit;
+    transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.home-card::before {
+    /* 左片：右侧锯齿裂缘 */
+    clip-path: polygon(0 0, 52% 0, 44% 14%, 55% 30%, 46% 47%, 56% 64%, 47% 81%, 53% 100%, 0 100%);
+}
+.home-card::after {
+    /* 右片：左侧锯齿裂缘（与左片互补） */
+    clip-path: polygon(100% 0, 52% 0, 44% 14%, 55% 30%, 46% 47%, 56% 64%, 47% 81%, 53% 100%, 100% 100%);
 }
 .home-card:hover::before {
-    opacity: 1;
-    transform: scaleY(1) scaleX(1);
+    transform: translate(-6px, 3px) rotate(-0.4deg);
+}
+.home-card:hover::after {
+    transform: translate(6px, -3px) rotate(0.4deg);
 }
 
 /* 碎裂轻颤：悬停瞬间卡片像被轻轻击中的玻璃，震颤着上浮后归于静止 */
