@@ -159,9 +159,11 @@
                     loginMsg.innerText = "密码或口令错误";
                     loginMsg.style.display = "block";
                 }
-            }).catch(function() {
+            }).catch(function(err) {
                 loginMsg.style.color = "#ff4757";
-                loginMsg.innerText = "验证失败，请重试";
+                var reason = (err && err.message) ? err.message : "未知原因";
+                if (!window.crypto || !window.crypto.subtle) reason = "当前浏览器不支持网页加密，请换最新版 Chrome / Edge 访问";
+                loginMsg.innerText = "验证失败：" + reason;
                 loginMsg.style.display = "block";
             });
         });

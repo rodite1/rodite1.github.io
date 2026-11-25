@@ -14,6 +14,20 @@ import { dirname, join, normalize, extname } from "node:path";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const port = Number(process.argv[2] || 8080);
 
+// 启动前检查：secret.json 必须是加密格式，否则隐藏文章解锁必然失败
+try {
+    const raw = await readFile(join(root, "secret.json"), "utf8");
+    const meta = JSON.parse(raw);
+    if (Array.isArray(meta) || !meta.kdf) {
+        console.warn("");
+        console.warn("⚠ public/secret.json 是明文（未加密），隐藏文章解锁会失败！");
+        console.warn("  请先运行：node scripts/encrypt-secret.mjs public");
+        console.warn("");
+    }
+} catch {
+    // 没有 secret.json 时忽略
+}
+
 const MIME = {
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",

@@ -139,7 +139,12 @@ var SecretVault = (function() {
     // 用口令尝试解锁：成功返回 CryptoKey，失败返回 null
     function unlock(password) {
         return loadMeta().then(function(meta) {
-            if (!meta || !meta.items || !meta.items.length) return null;
+            if (!meta) return null;
+            // 明文索引（未跑加密步骤）时给出明确原因，而不是误报"密码错误"
+            if (Array.isArray(meta) || !meta.kdf) {
+                throw new Error("secret.json 是明文（未加密）。请先运行 node scripts/encrypt-secret.mjs public 再预览/部署");
+            }
+            if (!meta.items || !meta.items.length) return null;
             return deriveKey(password, meta).then(function(key) {
                 return decryptItem(key, meta.items[0]).then(function(first) {
                     if (first === null) return null;
@@ -294,9 +299,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     msg.innerText = "密码或口令错误";
                     msg.style.display = "block";
                 }
-            }).catch(function() {
+            }).catch(function(err) {
                 msg.style.color = "#ff4757";
-                msg.innerText = "验证失败，请重试";
+                var reason = (err && err.message) ? err.message : "未知原因";
+                if (!window.crypto || !window.crypto.subtle) reason = "当前浏览器不支持网页加密，请换最新版 Chrome / Edge 访问";
+                msg.innerText = "验证失败：" + reason;
                 msg.style.display = "block";
             });
         });
