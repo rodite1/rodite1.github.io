@@ -1,0 +1,89 @@
+{{- /* ==================== 访客防护（最大努力拦截） ====================
+     拦截：F12、Ctrl/⌘+Shift+I/J/C/K（开发者工具）、Ctrl/⌘+U（查看源码）、
+           Ctrl/⌘+S（保存网页）、Ctrl/⌘+P（打印）、Ctrl/⌘+C/X（复制/剪切）、右键菜单。
+     触发时显示本站风格（暗色毛玻璃）的温和提示，1.5 秒内不重复弹出。
+
+     诚实声明：这只是"防君子不防小人"，可被以下方式绕过，请勿当作安全措施：
+     - 浏览器菜单（Chrome ⋮ → 更多工具 → 开发者工具）或地址栏 view-source: 仍可打开；
+     - 禁用 JavaScript、使用 curl/爬虫即可拿到全部公开内容；
+     - Firefox 可能不让页面捕获 F12 按键；
+     - 移动端长按选择复制不受影响；
+     - 评论区（Waline 跨域 iframe）内部不受本脚本影响。
+     真正需要保护的内容仍由 AES-256-GCM 加密兜底，不依赖本脚本。
+*/}}
+<script>
+(function () {
+    "use strict";
+
+    var toast = null, hideTimer = null, lastShown = 0;
+
+    function showToast(text) {
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "guard-toast";
+            toast.style.cssText = [
+                "position:fixed", "left:50%", "bottom:34px", "z-index:99999",
+                "max-width:min(84vw,420px)", "padding:10px 18px",
+                "background:rgba(30,30,30,0.72)",
+                "backdrop-filter:blur(10px)", "-webkit-backdrop-filter:blur(10px)",
+                "border:1px solid rgba(255,255,255,0.18)", "border-radius:12px",
+                "color:#cccccc", "font-size:13px", "letter-spacing:0.5px", "line-height:1.6",
+                "text-align:center", "pointer-events:none",
+                "opacity:0", "transform:translate(-50%,8px)",
+                "transition:opacity .35s ease, transform .35s ease"
+            ].join(";");
+            document.body.appendChild(toast);
+        }
+        toast.textContent = text;
+        toast.classList.add("show");
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(function () { toast.classList.remove("show"); }, 2200);
+    }
+
+    function gentle(text) {
+        var now = Date.now();
+        if (now - lastShown < 1500) return;  // 1.5 秒内只提示一次，避免刷屏
+        lastShown = now;
+        showToast(text);
+    }
+
+    document.addEventListener("keydown", function (e) {
+        var mod = e.ctrlKey || e.metaKey;
+        if (e.key === "F12") {
+            e.preventDefault();
+            gentle("这里没有宝藏：开发者工具已禁用。");
+            return;
+        }
+        if (mod && e.shiftKey && (e.code === "KeyI" || e.code === "KeyJ" || e.code === "KeyC" || e.code === "KeyK")) {
+            e.preventDefault();
+            gentle("开发者工具已禁用，请尊重原创。");
+            return;
+        }
+        if (mod && e.code === "KeyU") {
+            e.preventDefault();
+            gentle("源代码查看已禁用。");
+            return;
+        }
+        if (mod && e.code === "KeyS") {
+            e.preventDefault();
+            gentle("保存网页已禁用。");
+            return;
+        }
+        if (mod && e.code === "KeyP") {
+            e.preventDefault();
+            gentle("打印已禁用，请在线阅读。");
+            return;
+        }
+        if (mod && (e.code === "KeyC" || e.code === "KeyX")) {
+            e.preventDefault();
+            gentle("内容受原创保护，暂不支持复制。");
+            return;
+        }
+    }, { capture: true });
+
+    document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+        gentle("右键菜单已禁用，内容受原创保护。");
+    }, { capture: true });
+})();
+</script>

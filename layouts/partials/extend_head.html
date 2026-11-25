@@ -12,3 +12,6 @@
 {{- if and .IsPage $waline (ne (strings.TrimSpace $waline.serverURL) "") }}
 <link rel="stylesheet" href="https://registry.npmmirror.com/@waline/client/3.16.2/files/dist/waline.css">
 {{- end }}
+
+{{- /* 访客防护：F12 / 右键 / 复制 / 打印等最大努力拦截（放 head 尽早注册监听；可被禁用 JS 绕过，仅防普通访客） */}}
+{{ partial "content-guard.html" . }}
