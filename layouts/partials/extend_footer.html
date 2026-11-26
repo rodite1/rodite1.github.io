@@ -116,7 +116,8 @@ var SecretVault = (function() {
                     { name: "PBKDF2", salt: b64ToBuf(meta.kdf.salt), iterations: meta.kdf.iterations, hash: "SHA-256" },
                     km,
                     { name: "AES-GCM", length: 256 },
-                    false,
+                    true,   // 必须可导出：会话密钥要 exportKey 存进 sessionStorage 跨页共享。
+                            // 此前写 false 导致 exportKey 报 "key is not extractable"，浏览器解锁一直失败（2026-11-26 修复）
                     ["decrypt"]
                 );
             });
